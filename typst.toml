@@ -1,0 +1,19 @@
+[package]
+name = "lacy-sustech-theses"
+authors = ["Lacewing <https://github.com/lace-wing>"]
+license = "MIT"
+repository = "https://github.com/lace-wing/lacy-sustech-theses.typ"
+
+description = "Thesis templates for bachelor's, master's and doctor's of the Southern University of Science and Technology (SUSTech)."
+categories = ["thesis"]
+
+version = "0.1.0"
+compiler = "0.14"
+entrypoint = "export.typ"
+exclude = ["src/tests"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
+thumbnail = "thumbnail.png"
+
