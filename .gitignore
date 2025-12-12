@@ -1,0 +1,9 @@
+# darwin
+**/.DS_Store
+
+# product
+**.pdf
+!template/*.pdf
+
+# local
+**/local/
