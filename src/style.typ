@@ -3,7 +3,7 @@
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/numbly:0.1.0": numbly
 
-#import "misc.typ": spreadl
+#import "util.typ": spreadl
 #import "font.typ"
 
 /*
