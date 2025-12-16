@@ -16,18 +16,100 @@
 /// -> array
 #let to-arr(a) = if type(a) == array { a } else { (a,) }
 
-/// Choose between `a` and `default`.
-/// Choose `a` if it is not `auto`, otherwise choose `default`.
+/// Choose the first item that should not be discarded.
 ///
-/// - a (any): Maybe `auto`.
-/// - default (any): Default value.
-/// - ta (arguments): A function applied to `a` if it is chosen. Only the first positional argument considered.
+/// - args (arguments): Items to choose from.
+/// - discard (any): Criterion to discard an item.
+/// - default (any): The fallback value.
+/// - ts (function): A transformation to the selected item, excluding the default.
 /// -> any
-#let default(a, default, ..ta) = if a == auto { default } else {
-  let ta = ta.pos().at(0, default: none)
-  if ta == none { a } else { ta(a) }
+#let firstof(..args, discard: none, default: none, ts: a => a) = {
+  for arg in args.pos() {
+    if type(discard) == function {
+      if discard(arg) { return ts(arg) }
+    } else {
+      if arg != discard {
+        return ts(arg)
+      }
+    }
+  }
+  return default
 }
 
+/// Choose the first item that is not `auto`.
+///
+/// - args (arguments): Items to choose from.
+/// - default (any): The fallback value.
+/// - ts (function): A transformation to the selected item, excluding the default.
+/// -> any
+#let firstconcrete = firstof.with(discard: auto)
+
+/// Compose a series of functions with a body.
+///
+/// - body (any): The body to execute things on.
+/// - funcs (arguments): The functions to be composed, left-to-right.
+/// -> any
+#let compose(body, ..funcs) = (body, ..funcs.pos()).reduce((it, func) => if type(func) == function {
+  func(it)
+} else {
+  it
+})
+
+/// Convert `data` to a dictionary, panic on fail.
+///
+/// - data (dictionary, module, function, arguments, none): The data to convert to dictionary.
+/// -> dictionary
+#let to-dict(data) = {
+  if data == none {
+    return (:)
+  }
+
+  let t = type(data)
+  if t == dictionary {
+    return data
+  }
+  if t == module {
+    return dictionary(data)
+  }
+  if t == array {
+    return data.to-dict()
+  }
+  if t == arguments {
+    return data.named()
+  }
+  if t == function {
+    return to-dict(t())
+  }
+  panic("Cannot convert a " + str(t) + " to a dictionary!")
+}
+
+/// Merge dictionaries, left-to-right.
+/// On merge, values of existing keys are replaced, and values of new keys are added.
+/// Values of type `dictionary` are not merged, instead their own pairs are merged.
+///
+/// - dicts (arguments): The `dictionary`s to be merged.
+/// -> dictionary
+#let merge-dicts(..dicts) = (
+  dicts
+    .pos()
+    .reduce((orig, cand) => cand
+      .keys()
+      .fold(
+        orig,
+        (acc, k) => if k in orig.keys() and type(orig.at(k)) == dictionary and type(cand.at(k)) == dictionary {
+          acc + ((k): merge-dicts(orig.at(k), cand.at(k)))
+        } else {
+          acc + ((k): cand.at(k))
+        },
+      ))
+)
+
+/// Load data from a list of files, then merge data into a dictionary.
+/// The filenames minus extension will be the top-level keys.
+///
+/// - dir (path): A directory.
+/// - files (arguments): A list of filenames under `dir` to load.
+/// -> dictionary
 #let load-dir(
   dir,
   ..files,

@@ -20,28 +20,54 @@
 
 #show: style.generic
 
+#cp.setup(
+  title: (
+    zh: "狂人日记",
+    en: "Diary of a Madman",
+  ),
+  subtitle: (
+    zh: "救救孩子",
+    en: "Save the Children",
+  ),
+  candidate: (
+    zh: "鲁迅迅迅",
+    en: "Lu Xun",
+  ),
+  supervisor: (
+    zh: "周树人",
+    en: "Zhou Shuren",
+  ),
+  department: (
+    zh: "文学系",
+    en: "Department of Literature",
+  ),
+  degree: "master",
+  // degree-type: "professional",
+  degree-type: "academic",
+  discipline: (
+    zh: "创意写作",
+    en: "Creative Writing",
+  ),
+  domain: (
+    zh: "文学",
+    en: "Literature",
+  ),
+  print-date: datetime(year: 2025, month: 12, day: 12),
+  defence-date: datetime(year: 2026, month: 01, day: 06),
+  clc: "12345",
+  udc: "12345",
+)
+
+#show: style.cover
+#cp.cover()
+
+#show: style.title-page
+#cp.title-page-zh()
+
 #show: style.abstract
 
 = 摘要
 #lom
-
-#cp.config(
-  title: ("狂人日记", "Diary of a Madman"),
-  subtitle: ("救救孩子", "Save the Children"),
-  candidate: ("鲁迅", "Lu Xun"),
-  supervisor: ("周树人", "Zhou Shuren"),
-  department: ("文学系", "Department of Literature"),
-  degree: ("硕士", "bachelor"),
-  professional: true,
-  discipline: ("艺术", "Arts"),
-  category: ("文学", "Literature"),
-  print-date: datetime(year: 2025, month: 12, day: 12),
-  defence-date: datetime(year: 2026, month: 01, day: 06),
-)
-#context {
-  let cs = cp.cs.final()
-  cs
-}
 
 = Abstract
 #lom

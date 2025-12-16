@@ -3,3 +3,9 @@ bachelor = "bachelor"
 master = "master"
 doctor = "doctor"
 
+[cover]
+class = "学位论文"
+bachelor = "本科"
+master = "硕士"
+doctor = "博士"
+

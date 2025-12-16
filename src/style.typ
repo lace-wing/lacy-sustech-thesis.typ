@@ -3,7 +3,7 @@
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/numbly:0.1.0": numbly
 
-#import "util.typ": spreadl
+#import "util.typ": *
 #import "font.typ"
 
 /*
@@ -76,13 +76,11 @@
   }
 
   show heading.where(level: 1): it => {
-    pagebreak(weak: true)
-
     set align(center)
-
     //HACK
     show regex(`\p{Han}{2}`.text): spreadl.with(3em)
 
+    pagebreak(weak: true)
     it
   }
 
@@ -105,18 +103,36 @@
 
 /// Cover page. {{{
 #let cover(body) = {
+  set text(
+    font: font.group.song,
+  )
+
+  set page(
+    numbering: none,
+  )
+
   body
 }
 // }}}
 
 /// Title pages. {{{
-#let title(body) = {
+#let title-page(body) = {
   body
 }
 // }}}
 
 /// Abstracts. {{{
-#let abstract(body) = {
+#let abstract(body, lang: "zh", region: auto) = {
+  set text(
+    lang: lang,
+    region: firstconcrete(
+      region,
+      default: {
+        if lang == "zh" { "cn" } else { "us" }
+      },
+    ),
+  )
+
   set page(
     numbering: "I",
   )
