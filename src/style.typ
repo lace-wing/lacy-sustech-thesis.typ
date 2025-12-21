@@ -24,7 +24,18 @@
 */
 
 /// Default leading.
-#let leading = 20pt
+#let leading = 11pt // 20 - 9 = 11
+#let leading = 20pt - font.csort.s4
+
+#let heading-header = text(
+  size: font.csort.S5,
+  context {
+    set align(center)
+    //HACK
+    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
+    hydra(1, skip-starting: false)
+  },
+)
 
 /// Generic styles. {{{
 ///
@@ -36,15 +47,7 @@
     margin: 3cm,
     header-ascent: 0.8cm, // 3 - 2.2 = 0.8
     footer-descent: 0.8cm,
-    header: text(
-      size: font.csort.S5,
-      context {
-        set align(center)
-        //HACK
-        show regex(`\p{Han}{2}`.text): spreadl.with(3em)
-        hydra(1, skip-starting: false)
-      },
-    ),
+    header: heading-header,
   )
 
   set text(
@@ -55,7 +58,6 @@
   set par(
     first-line-indent: (amount: 2em, all: true),
     leading: leading,
-    justify: true,
   )
 
   set bibliography(style: "gb-7714-2015-numeric")
@@ -78,7 +80,7 @@
   show heading.where(level: 1): it => {
     set align(center)
     //HACK
-    show regex(`\p{Han}{2}`.text): spreadl.with(3em)
+    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
 
     pagebreak(weak: true)
     it
@@ -117,6 +119,33 @@
 
 /// Title pages. {{{
 #let title-page(body) = {
+  set page(
+    numbering: none,
+    header: none,
+  )
+
+  body
+}
+// }}}
+
+/// Reviewers and committee. {{{
+#let reviewers-n-committee(body) = {
+  set page(
+    numbering: none,
+    header: none,
+  )
+
+  body
+}
+// }}}
+
+/// Declarations. {{{
+#let declarations(body) = {
+  set page(
+    numbering: none,
+    header: none,
+  )
+
   body
 }
 // }}}
@@ -135,6 +164,11 @@
 
   set page(
     numbering: "I",
+    header: heading-header,
+  )
+
+  set par(
+    justify: true,
   )
 
   set heading(
@@ -149,6 +183,11 @@
 #let main(body) = {
   set page(
     numbering: "1",
+    header: heading-header,
+  )
+
+  set par(
+    justify: true,
   )
 
   set heading(

@@ -22,28 +22,37 @@
 
 #cp.setup(
   title: (
-    zh: "狂人日记",
-    en: "Diary of a Madman",
+    zh: [狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记],
+    en: [Diary of a Normal Madman],
+  ),
+  display-title: (
+    en: ((upper[Diary of a ] + [Normal] + upper[ Madman],) * 4).join[ ],
   ),
   subtitle: (
     zh: "救救孩子",
     en: "Save the Children",
   ),
   candidate: (
-    zh: "鲁迅迅迅",
+    zh: "鲁迅",
     en: "Lu Xun",
   ),
   supervisor: (
-    zh: "周树人",
-    en: "Zhou Shuren",
+    zh: "周树人教授",
+    en: "Professor Zhou Shuren",
+  ),
+  associate-supervisor: (
+    zh: "周树人副教授",
+    en: "Professor Zhou Shuren",
   ),
   department: (
     zh: "文学系",
     en: "Department of Literature",
   ),
   degree: "master",
-  // degree-type: "professional",
-  degree-type: "academic",
+  // 专业学位
+  degree-type: "professional",
+  // 学术学位
+  // degree-type: "academic",
   discipline: (
     zh: "创意写作",
     en: "Creative Writing",
@@ -63,6 +72,27 @@
 
 #show: style.title-page
 #cp.title-page-zh()
+#cp.title-page-en()
+
+#show: style.reviewers-n-committee
+#cp.reviewers-n-commitee(
+  reviewers: (
+    // 可以写字典
+    (name: "刘某某", title: "教授", institute: "南方科技大学"),
+    // 也可以按顺序写条目
+    ("陈某某", "副教授", "某大学"),
+  ),
+  committee: (
+    (position: "主席", name: "赵某某", title: "教授", institute: "南方科技大学"),
+    ("秘书", "吴某某", "助理研究员", "南方科技大学"),
+    (position: "委员", name: "刘某某", title: "教授", institute: "南方科技大学"),
+    ("委员", "杨某某", "研究员", "中国某某某科学院某某研究所"),
+  ),
+)
+
+#show: style.declarations
+#cp.declarations()
+#cp.declarations(lang: "en")
 
 #show: style.abstract
 

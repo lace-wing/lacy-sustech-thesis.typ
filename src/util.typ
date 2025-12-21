@@ -1,9 +1,5 @@
 /// Utilities.
 
-#let pkg = toml("../typst.toml")
-
-#let pkg-name = pkg.package.name
-
 /// Make "x::y::z"-like namespace strings.
 ///
 /// - n (arguments): Names in `str`.
@@ -122,6 +118,7 @@
       let fmt = ts.last()
       // @typstyle off
       let func = (if fmt == "toml" { toml }
+        else if fmt == "typ" { f => { import f: export; export } }
         else if fmt in ("yml", "yaml") { yaml }
         else if fmt == "csv" { csv }
         else if fmt == "json" { json }
@@ -188,4 +185,19 @@
   ),
 )
 
+#let ord-en(n) = {
+  if n in range(11, 14) { return "th" }
+
+  let last-digit = calc.rem(n, 10)
+  if last-digit == 1 { return "st" }
+  if last-digit == 2 { return "nd" }
+  if last-digit == 3 { return "rd" }
+  return "th"
+}
+
+#let pkg = toml("../typst.toml")
+
+#let pkg-name = pkg.package.name
+
+#let conf-state = state(ns(pkg-name, "config"), (:))
 
