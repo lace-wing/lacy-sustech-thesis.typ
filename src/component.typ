@@ -453,10 +453,11 @@
 }
 
 #let declarations(
-  lang: "zh",
   delay: 0,
 ) = context {
   let conf = conf-state.get()
+  let lang = text.lang
+  let region = text.region
 
   let signature(
     of: none,
@@ -508,7 +509,10 @@
 
   set enum(
     full: true,
-    numbering: numbly("{1}.", "({2})"),
+    numbering: numbly(
+      "{1}.",
+      if lang == "zh" { (..ns) => [（#ns.at(1)）#h(-0.5em)] } else { "({2})" },
+    ),
   )
 
   [
@@ -551,5 +555,46 @@
     #signature(of: supervisor)
   ]
   pagebreak()
+}
+
+#let toc() = {
+  show outline.entry: it => context {
+    let fs = it.fields()
+    let el = fs.element
+    let rule(body) = {
+      set text(
+        font: font.group.hei-latin-song,
+      ) if fs.level == 1
+      show regex(`[0-9\p{Latin}]`.text): set text(
+        weight: "bold",
+      )
+      body
+    }
+
+    link(
+      el.location(),
+      grid(
+        columns: (auto, auto, 1fr, auto),
+        {
+          h((fs.level - 1) * outline.indent)
+          let prefix = it.prefix()
+          if prefix != none {
+            show: rule
+            prefix
+            h(0.5em)
+          }
+        },
+        {
+          show: rule
+          show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
+          el.fields().body
+        },
+        fs.fill,
+        it.page(),
+      ),
+    )
+  }
+
+  outline()
 }
 

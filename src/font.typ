@@ -69,6 +69,15 @@
     "Heiti SC", // Windows
     "STHeiti", // Darwin
   ),
+  hei-latin-song: (
+    (name: "Times New Roman", covers: "latin-in-cjk"),
+    "Source Han Sans SC",
+    "Source Han Sans",
+    "Noto Sans CJK SC",
+    "SimHei",
+    "Heiti SC", // Windows
+    "STHeiti", // Darwin
+  ),
   kai: (
     (name: "Times New Roman", covers: "latin-in-cjk"),
     "KaiTi",

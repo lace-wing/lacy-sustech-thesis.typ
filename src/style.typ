@@ -24,35 +24,44 @@
 */
 
 /// Default leading.
-#let leading = 11pt // 20 - 9 = 11
+// #let leading = 11pt // 20 - 9 = 11
 #let leading = 20pt - font.csort.s4
 
-#let heading-header = text(
+#let header-heading = text(
   size: font.csort.S5,
   context {
     set align(center)
-    //HACK
-    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
-    hydra(1, skip-starting: false)
+    hydra(
+      1,
+      skip-starting: false,
+      display: (ctx, cand) => {
+        if cand.numbering != none {
+          numbering(cand.numbering, ..counter(heading).at(cand.location()))
+          h(0.5em)
+        }
+        spreadl(3em, cand.body)
+      },
+    )
   },
 )
 
-/// Generic styles. {{{
-///
-/// - body (content): Body.
-/// -> content
-#let generic(body) = {
+#let generic(
+  body,
+  lang: "zh",
+  region: auto,
+) = {
   set page(
     paper: "a4",
     margin: 3cm,
     header-ascent: 0.8cm, // 3 - 2.2 = 0.8
     footer-descent: 0.8cm,
-    header: heading-header,
+    header: header-heading,
   )
 
   set text(
     font: font.group.song,
     size: font.csort.s4,
+    ..args-lang(lang, region),
   )
 
   set par(
@@ -64,9 +73,21 @@
 
   show heading: it => {
     set text(
-      font: font.group.hei,
-      // Starting from S3, minnimum s5
-      size: font.csort-sizes.at(calc.min(it.level * 2 + 4, 11)),
+      font: if it.level < 4 {
+        font.group.hei
+      } else {
+        font.group.song
+      },
+      size: if it.level == 1 {
+        font.csort.S3
+      } else if it.level == 2 {
+        font.csort.S4
+      } else if it.level == 3 {
+        13pt
+      } else {
+        font.csort.s4
+      },
+      weight: if it.level < 4 { "bold" } else { "regular" },
     )
 
     set block(
@@ -79,7 +100,6 @@
 
   show heading.where(level: 1): it => {
     set align(center)
-    //HACK
     show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
 
     pagebreak(weak: true)
@@ -135,15 +155,27 @@
     header: none,
   )
 
+  set heading(
+    numbering: none,
+  )
+
   body
 }
 // }}}
 
 /// Declarations. {{{
-#let declarations(body) = {
+#let declarations(
+  body,
+  lang: "zh",
+  region: auto,
+) = {
   set page(
     numbering: none,
     header: none,
+  )
+
+  set heading(
+    numbering: none,
   )
 
   body
@@ -151,20 +183,14 @@
 // }}}
 
 /// Abstracts. {{{
-#let abstract(body, lang: "zh", region: auto) = {
-  set text(
-    lang: lang,
-    region: firstconcrete(
-      region,
-      default: {
-        if lang == "zh" { "cn" } else { "us" }
-      },
-    ),
-  )
-
+#let abstract(
+  body,
+  lang: "zh",
+  region: auto,
+) = {
   set page(
     numbering: "I",
-    header: heading-header,
+    header: header-heading,
   )
 
   set par(
@@ -173,6 +199,23 @@
 
   set heading(
     numbering: none,
+  )
+
+  body
+}
+// }}}
+
+// Table of Content. {{{
+#let toc(body) = {
+  set page(
+    numbering: "I",
+    header: header-heading,
+  )
+
+  set outline(
+    indent: 1em,
+    depth: 3,
+    title: context if text.lang == "zh" [目录] else [TABLE OF CONTENTS],
   )
 
   body
@@ -183,7 +226,7 @@
 #let main(body) = {
   set page(
     numbering: "1",
-    header: heading-header,
+    header: header-heading,
   )
 
   set par(
@@ -192,8 +235,16 @@
 
   set heading(
     numbering: numbly(
-      n => [第#n;章#h(1em, weak: true)],
-      "1.1",
+      n => context if text.lang == "zh" [第#n;章] else [CHAPTER #n],
+      "{1}.{2}",
+      "{1}.{2}.{3}",
+      (..ns) => context if text.lang == "zh" [
+        #h(-0.6em, weak: true)（#ns.at(3)）#h(-0.6em)
+      ] else [
+        (#ns.at(3))
+      ],
+      "{5:①}",
+      "{6:a.}",
     ),
   )
 

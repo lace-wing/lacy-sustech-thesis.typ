@@ -195,6 +195,21 @@
   return "th"
 }
 
+#let args-lang(
+  lang,
+  region,
+) = {
+  arguments(
+    lang: lang,
+    region: firstconcrete(
+      region,
+      default: {
+        if lang == "zh" { "cn" } else { "us" }
+      },
+    ),
+  )
+}
+
 #let pkg = toml("../typst.toml")
 
 #let pkg-name = pkg.package.name

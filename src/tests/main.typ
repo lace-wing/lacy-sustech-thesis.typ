@@ -90,27 +90,51 @@
   ),
 )
 
+#show: style.generic
 #show: style.declarations
 #cp.declarations()
-#cp.declarations(lang: "en")
 
 #show: style.abstract
+
+#counter(page).update(1)
 
 = 摘要
 #lom
 
-= Abstract
+= ABSTRACT
 #lom
 
+#show: style.toc
+#cp.toc()
+
+#show: style.generic
 #show: style.main
 
-= 介绍
+#counter(page).update(1)
+#counter(heading).update(0)
+
+= 前言
 
 #lom
 
-== 小介绍
+== #(("长",) * 80).join()
 
-=== 小小介绍
+#pagebreak()
 
-==== 小小小介绍
+=== 不长
+
+#pagebreak()
+
+= 记日记
+
+== 节标题
+
+=== 条标题
+
+==== 条目一
+==== 条目一
+===== 条目二
+===== 条目二
+====== 条目三
+====== 条目三
 
