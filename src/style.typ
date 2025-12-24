@@ -2,6 +2,8 @@
 
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/numbly:0.1.0": numbly
+#import "@preview/equate:0.3.2": equate
+#import "@preview/i-figured:0.2.4": show-figure
 
 #import "util.typ": *
 #import "font.typ"
@@ -99,6 +101,8 @@
   }
 
   show heading.where(level: 1): it => {
+    counter(math.equation).update(0)
+
     set align(center)
     show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
 
@@ -117,6 +121,49 @@
     )
 
     it
+  }
+
+  show: equate
+
+  set math.equation(
+    numbering: (..ns, loc: auto) => context [
+      (#(counter(heading).at(firstconcrete(loc, here())).at(0), ..ns.pos()).map(str).join("-"))
+    ],
+  )
+
+  // HACK Fixing equations' contextual numbering not following original heading count.
+  // NOTE From equate 0.3.2, edited.
+  show ref: it => {
+    if it.element == none { return it }
+    if it.element.func() != figure { return it }
+    if it.element.kind != math.equation { return it }
+    if it.element.body == none { return it }
+    if it.element.body.func() != metadata { return it }
+
+    let sub-numbering-state = state("equate/sub-numbering", false)
+
+    let nums = if sub-numbering-state.at(it.element.location()) {
+      it.element.body.value
+    } else {
+      (it.element.body.value.first() + it.element.body.value.slice(1).sum(default: 1) - 1,)
+    }
+
+    let num = numbering(
+      if type(it.element.numbering) == function {
+        it.element.numbering.with(loc: it.element.location())
+      } else { it.element.numbering },
+      ..nums,
+    )
+
+    let supplement = if it.supplement == auto {
+      it.element.supplement
+    } else if type(it.supplement) == function {
+      (it.supplement)(it.element)
+    } else {
+      it.supplement
+    }
+
+    link(it.element.location(), if supplement not in ([], none) [#supplement~#num] else [#num])
   }
 
   body

@@ -113,9 +113,19 @@
 #counter(page).update(1)
 #counter(heading).update(0)
 
-= 前言
+= 引言
 
-#lom
+$
+  integral_(a)^(b) e^(-x) dif x #<eq:1> \
+  integral_(a)^(b) e^(-x) dif x \
+$
+
+some $"inline" [a]$ text @eq:2
+
+$
+  integral_(a)^(b) e^(-x) dif x \ // #<eq:1> \
+  integral_(a)^(b) e^(-x) dif x \
+$ <2>
 
 == #(("长",) * 80).join()
 
@@ -126,6 +136,17 @@
 #pagebreak()
 
 = 记日记
+
+$
+  integral_(a)^(b) e^(-x) dif x #<eq:2>
+$
+
+some $"inline" [a]$ text @eq:1
+
+$
+  integral_(a)^(b) e^(-x) dif x \
+  integral_(a)^(b) e^(-x) dif x \
+$
 
 == 节标题
 
