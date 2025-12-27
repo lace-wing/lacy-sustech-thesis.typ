@@ -117,12 +117,10 @@
 
 $
   integral_(a)^(b) e^(-x) dif x #<eq:1> \
-  integral_(a)^(b) e^(-x) dif x \
-  #context text.font
+  integral_(a)^(b) e^(-x/2) dif x \
 $
 
-some $"inline" [a]$ text @eq:2
-some $"行内" [a]$ text @eq:2
+some $"行内" e^(-1/2) + (3/4)/5 quad [a]$, @eq:2
 
 $
   integral_(a)^(b) e^(-x) dif x \ // #<eq:1> \

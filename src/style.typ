@@ -124,8 +124,10 @@
   }
 
   show math.equation: set text(
-    font: font.group.song-math
+    font: font.group.song-math,
   )
+
+  show math.equation.where(block: false): set math.frac(style: "horizontal")
 
   show: equate
 

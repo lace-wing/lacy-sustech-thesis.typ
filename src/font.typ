@@ -104,15 +104,13 @@
     "STHeiti", // Darwin
   ),
   song-math: (
-    "XITS Math",
+    "XITS Math", // Like Times New Roman
     "Cambria Math",
-  )
-    + (
-      "Source Han Serif SC",
-      "Source Han Serif",
-      "Noto Serif CJK SC",
-      "SimSun",
-    ).map(n => (name: n, covers: regex(`\p{Han}`.text))),
+    "Source Han Serif SC",
+    "Source Han Serif",
+    "Noto Serif CJK SC",
+    "SimSun",
+  ),
 )
 
 /// 字体组。
