@@ -103,14 +103,26 @@
     "Heiti SC", // Windows
     "STHeiti", // Darwin
   ),
+  song-math: (
+    "XITS Math",
+    "Cambria Math",
+  )
+    + (
+      "Source Han Serif SC",
+      "Source Han Serif",
+      "Noto Serif CJK SC",
+      "SimSun",
+    ).map(n => (name: n, covers: regex(`\p{Han}`.text))),
 )
 
 /// 字体组。
 #let 字体 = (
   宋体: group.song,
   黑体: group.hei,
+  黑体英衬线: group.hei-latin-song,
   楷体: group.kai,
   仿宋: group.fsong,
   等宽: group.mono,
+  宋体数学: group.song-math,
 )
 

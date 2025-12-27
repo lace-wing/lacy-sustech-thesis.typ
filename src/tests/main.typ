@@ -118,9 +118,11 @@
 $
   integral_(a)^(b) e^(-x) dif x #<eq:1> \
   integral_(a)^(b) e^(-x) dif x \
+  #context text.font
 $
 
 some $"inline" [a]$ text @eq:2
+some $"行内" [a]$ text @eq:2
 
 $
   integral_(a)^(b) e^(-x) dif x \ // #<eq:1> \

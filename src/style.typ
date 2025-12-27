@@ -123,6 +123,10 @@
     it
   }
 
+  show math.equation: set text(
+    font: font.group.song-math
+  )
+
   show: equate
 
   set math.equation(
