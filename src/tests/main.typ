@@ -107,6 +107,30 @@
 #show: style.toc
 #cp.toc()
 
+#show: style.glossary
+
+= 符号和缩略语说明
+
+/ DFT: 密度泛函理论（Density Function Theory）
+
+/ HPLC: 高效液相色谱（High Performance Liquid Chromatography）
+
+/ LC-MS: 液相色谱--质谱联用（Liquid Chromatography-Mass Spectrum）
+
+/ ONIOM: 分层算法(Our own N-layered Integrated molecular Orbital and molecular Mechanics）
+
+/ SCRF: 自洽反应场（Self-Consistent Reaction Field）
+
+/ TIC:总离子浓度（Total Ion Content）
+
+/ $E_a$: 化学反应的活化能（Activation Energy）
+
+/ $Delta G^eq.not$: 活化自由能（Activation Free Energy）
+
+/ $kappa$: 传输系数（Transmission Coefficient）
+
+/ $nu_i$: 虚频（Imaginary Frequency）
+
 #show: style.generic
 #show: style.main
 
@@ -125,13 +149,9 @@ some $"行内" e^(-1/2) + (3/4)/5 quad [a]$, @eq:2
 $
   integral_(a)^(b) e^(-x) dif x \ // #<eq:1> \
   integral_(a)^(b) e^(-x) dif x \
-$ <2>
+$
 
 == #(("长",) * 80).join()
-
-#pagebreak()
-
-=== 不长
 
 #pagebreak()
 
@@ -150,6 +170,10 @@ $
 
 == 节标题
 
+某句话 @zhangkun1994。
+
+Some sentence @carlson1981two[67-69].
+
 === 条标题
 
 ==== 条目一
@@ -159,3 +183,4 @@ $
 ====== 条目三
 ====== 条目三
 
+#bibliography("refs.bib")
