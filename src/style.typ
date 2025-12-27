@@ -9,15 +9,6 @@
 #import "font.typ"
 
 /*
-（1） 封面
-（2） 中文题名页（内封）
-（3） 英文题名页（内封）
-（4） 学位论文公开评阅人和答辩委员会名单
-（5） 南方科技大学学位论文原创性声明和使用授权说明
-（6） 摘要
-（7） Abstract
-（8） 目录
-（9） 符号和缩略语说明（如有）
 （10） 正文：第 1 章（引言或绪论）、第 2 章、……、结论
 （11） 参考文献
 （12） 附录（如有）
@@ -33,16 +24,21 @@
   size: font.csort.S5,
   context {
     set align(center)
-    hydra(
-      1,
-      skip-starting: false,
-      display: (ctx, cand) => {
-        if cand.numbering != none {
-          numbering(cand.numbering, ..counter(heading).at(cand.location()))
-          h(0.5em)
-        }
-        spreadl(3em, cand.body)
-      },
+    box(
+      width: 100%,
+      inset: 0.65em,
+      stroke: (bottom: gray),
+      hydra(
+        1,
+        skip-starting: false,
+        display: (ctx, cand) => {
+          if cand.numbering != none {
+            numbering(cand.numbering, ..counter(heading).at(cand.location()))
+            h(0.5em)
+          }
+          spreadl(3em, cand.body)
+        },
+      ),
     )
   },
 )
