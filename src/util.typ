@@ -210,9 +210,50 @@
   )
 }
 
+#let infer-display-title(
+  title,
+  display-title,
+) = {
+  let ts(l, t) = if l == "en" {
+    (l, upper(t))
+  } else {
+    (l, t)
+  }
+
+  title
+    .pairs()
+    .map(((l, t)) => {
+      if l in display-title {
+        if display-title.at(l) == auto {
+          return ts(l, t)
+        }
+        return (l, display-title.at(l))
+      }
+      return ts(l, t)
+    })
+    .to-dict()
+}
+
 #let pkg = toml("../typst.toml")
 
 #let pkg-name = pkg.package.name
 
-#let conf-state = state(ns(pkg-name, "config"), (:))
+#let loc-default = load-dir("./loc", "zh.typ", "en.typ")
+
+#let config = state(ns(pkg-name, "config"), (:))
+
+#let numbering-with-section(
+  numbering,
+) = if type(numbering) == str {
+  (..ns, loc: auto) => std.numbering(
+    numbering,
+    counter(heading).at(firstconcrete(loc, here())).at(0),
+    ..ns,
+  )
+} else {
+  (..ns, loc: auto) => numbering(
+    counter(heading).at(firstconcrete(loc, here())).at(0),
+    ..ns,
+  )
+}
 

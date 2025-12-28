@@ -121,7 +121,7 @@
 
 / SCRF: 自洽反应场（Self-Consistent Reaction Field）
 
-/ TIC:总离子浓度（Total Ion Content）
+/ TIC: 总离子浓度（Total Ion Content）
 
 / $E_a$: 化学反应的活化能（Activation Energy）
 
@@ -146,14 +146,28 @@ $
 
 some $"行内" e^(-1/2) + (3/4)/5 quad [a]$, @eq:2
 
-$
-  integral_(a)^(b) e^(-x) dif x \ // #<eq:1> \
-  integral_(a)^(b) e^(-x) dif x \
-$
+#let florem = figure(
+  caption: lorem(2),
+  box(
+    stroke: black,
+    width: 2cm,
+    height: 1.5cm,
+  ),
+)
+
+#let sflorem = cp.figures.with(
+  caption: lorem(2),
+  columns: 2,
+  florem,
+  florem,
+)
+
+#florem
+
+#sflorem(label: <fg:1>, <fg:1-a>)
+#sflorem(<fg:2-b>)
 
 == #(("长",) * 80).join()
-
-#pagebreak()
 
 = 记日记
 
@@ -163,16 +177,35 @@ $
 
 some $"inline" [a]$ text @eq:1
 
+some fig @fg:2-b
+
 $
   integral_(a)^(b) e^(-x) dif x \
   integral_(a)^(b) e^(-x) dif x \
 $
+
+#sflorem()
+#sflorem()
+
+some fig @fg:1 and @fg:1-a
 
 == 节标题
 
 某句话 @zhangkun1994。
 
 Some sentence @carlson1981two[67-69].
+
+#figure(
+  caption: [Data],
+  table(
+    columns: 3,
+    table.hline(),
+    table.header[Orig][Trans][Term],
+    table.hline(),
+    ..(($1$, $2$, $3$, $4$, $5$, $6$, $7$, $8$, $9$) * 2),
+    table.hline(),
+  ),
+)
 
 === 条标题
 
@@ -184,3 +217,4 @@ Some sentence @carlson1981two[67-69].
 ====== 条目三
 
 #bibliography("refs.bib")
+

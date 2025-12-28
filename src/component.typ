@@ -2,35 +2,41 @@
 
 #import "@preview/conjak:0.2.3": *
 #import "@preview/numbly:0.1.0": numbly
+#import "@preview/subpar:0.2.2"
 
 #import "util.typ": *
 #import "font.typ"
 
-#let default-loc = load-dir("./loc", "zh.typ", "en.typ")
+#let fig-sizes = (
+  small: (
+    width: 20cm / 3,
+    height: 5cm,
+  ),
+  medium: (
+    width: 9cm,
+    height: 6.75cm,
+  ),
+  large: (
+    width: 13.5cm,
+    height: 9cm,
+  ),
+)
 
-#let infer-display-title(
-  title,
-  display-title,
-) = {
-  let ts(l, t) = if l == "en" {
-    (l, upper(t))
-  } else {
-    (l, t)
-  }
+#let figures = subpar.grid.with(
+  numbering: numbering-with-section("1-1"),
+  numbering-sub-ref: numbering-with-section("1-1 (a)"),
+  grid-styles: it => {
+    set std.grid(
+      gutter: 1em,
+      align: bottom,
+    )
+    show figure.caption: set text(
+      size: 11pt,
+    )
 
-  title
-    .pairs()
-    .map(((l, t)) => {
-      if l in display-title {
-        if display-title.at(l) == auto {
-          return ts(l, t)
-        }
-        return (l, display-title.at(l))
-      }
-      return ts(l, t)
-    })
-    .to-dict()
-}
+    it
+  },
+)
 
 #let setup(
   loc: (:),
@@ -56,8 +62,8 @@
   confidentiality: "公开",
 ) = {
   //HACK later is replaced with argument-passing to each function, via wrappers
-  conf-state.update(c => {
-    let loc = merge-dicts(default-loc, loc)
+  config.update(c => {
+    let loc = merge-dicts(loc-default, loc)
     let langs = to-arr(langs)
 
     let title = to-dict(title)
@@ -115,7 +121,7 @@
 }
 
 #let cover() = context {
-  let conf = conf-state.get()
+  let conf = config.get()
   let loc = conf.loc
 
   let class = {
@@ -205,7 +211,7 @@
 }
 
 #let title-page-zh() = context {
-  let conf = conf-state.get()
+  let conf = config.get()
   let is-prof = conf.degree-type == "professional"
 
   let classifications = {
@@ -311,7 +317,7 @@
 }
 
 #let title-page-en() = context {
-  let conf = conf-state.get()
+  let conf = config.get()
   let is-prof = conf.degree-type == "professional"
 
   let title = {
@@ -455,7 +461,7 @@
 #let declarations(
   delay: 0,
 ) = context {
-  let conf = conf-state.get()
+  let conf = config.get()
   let lang = text.lang
   let region = text.region
 
@@ -468,7 +474,7 @@
     ..(
       if lang == "zh" {
         (
-          [#of;签名：],
+          spreadl(3em)[#of;签名] + [：],
           spreadl(3em)[日期] + [：],
         )
       } else {
@@ -528,7 +534,7 @@
       I shall bear the legal liabilities of the above statement.
     ]
 
-    #signature()
+    #signature(of: author)
 
     == #conf.loc.at(lang).declarations.title-authorization
     #if lang == "zh" [

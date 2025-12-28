@@ -3,21 +3,18 @@
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/equate:0.3.2": equate
-#import "@preview/i-figured:0.2.4": show-figure
 
 #import "util.typ": *
 #import "font.typ"
 
 /*
 （10） 正文：第 1 章（引言或绪论）、第 2 章、……、结论
-（11） 参考文献
 （12） 附录（如有）
 （13） 致谢
 （14） 个人简历、在学期间完成的相关学术成果
 */
 
 /// Default leading.
-// #let leading = 11pt // 20 - 9 = 11
 #let leading = 20pt - font.csort.s4
 
 #let header-heading = text(
@@ -66,6 +63,146 @@
     first-line-indent: (amount: 2em, all: true),
     leading: leading,
   )
+
+  set figure(
+    numbering: numbering-with-section("1-1"),
+  )
+
+  show figure: it => {
+    set figure.caption(
+      position: top,
+    ) if it.kind == table
+
+    // NOTE Automatic "cont." with caption a/o hline-d header is unachievable in Typst 0.14, requiring seperation by user.
+    set block(breakable: false)
+
+    it
+  }
+
+  show figure.caption: it => {
+    set text(
+      size: 11pt,
+    )
+    // NOTE `figure` itself covers block spacing, so no extra spacing setting.
+
+    it
+  }
+
+  set table(
+    stroke: none,
+  )
+
+  show table: it => {
+    set text(
+      size: 11pt,
+    )
+    set par(
+      spacing: 3pt,
+    )
+
+    it
+  }
+
+  show heading: it => {
+    set text(
+      font: if it.level < 4 {
+        font.group.hei
+      } else {
+        font.group.song
+      },
+      size: if it.level == 1 {
+        font.csort.S3
+      } else if it.level == 2 {
+        font.csort.S4
+      } else if it.level == 3 {
+        13pt
+      } else {
+        font.csort.s4
+      },
+      weight: if it.level < 4 { "bold" } else { "regular" },
+    )
+
+    set block(
+      above: if it.level >= 2 { 24pt } else { 12pt },
+      below: if it.level >= 1 { 18pt } else { 6pt },
+    )
+
+    it
+  }
+
+  show heading.where(level: 1): it => {
+    counter(math.equation).update(0)
+
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
+    counter(figure.where(kind: raw)).update(0)
+
+    set align(center)
+    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
+
+    pagebreak(weak: true)
+    it
+  }
+
+  show title: it => {
+    set text(
+      font: font.group.hei,
+      size: font.csort.S2,
+    )
+
+    set par(
+      leading: leading * 1.25,
+    )
+
+    it
+  }
+
+  show math.equation: set text(
+    font: font.group.song-math,
+  )
+
+  show math.equation.where(block: false): set math.frac(style: "horizontal")
+
+  show: equate
+
+  set math.equation(
+    numbering: numbering-with-section("(1-1)"),
+  )
+
+  // HACK Fixing equations' contextual numbering not following original heading count.
+  // Source: equate 0.3.2, edited.
+  show ref: it => {
+    if it.element == none { return it }
+    if it.element.func() != figure { return it }
+    if it.element.kind != math.equation { return it }
+    if it.element.body == none { return it }
+    if it.element.body.func() != metadata { return it }
+
+    let sub-numbering-state = state("equate/sub-numbering", false)
+
+    let nums = if sub-numbering-state.at(it.element.location()) {
+      it.element.body.value
+    } else {
+      (it.element.body.value.first() + it.element.body.value.slice(1).sum(default: 1) - 1,)
+    }
+
+    let num = numbering(
+      if type(it.element.numbering) == function {
+        it.element.numbering.with(loc: it.element.location())
+      } else { it.element.numbering },
+      ..nums,
+    )
+
+    let supplement = if it.supplement == auto {
+      it.element.supplement
+    } else if type(it.supplement) == function {
+      (it.supplement)(it.element)
+    } else {
+      it.supplement
+    }
+
+    link(it.element.location(), if supplement not in ([], none) [#supplement~#num] else [#num])
+  }
 
   set bibliography(style: "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl")
   set bibliography(style: "./gb-t-7714-2015-numeric.hayagriva-0.9.1.csl")
@@ -216,105 +353,6 @@
     it
   }
 
-  show heading: it => {
-    set text(
-      font: if it.level < 4 {
-        font.group.hei
-      } else {
-        font.group.song
-      },
-      size: if it.level == 1 {
-        font.csort.S3
-      } else if it.level == 2 {
-        font.csort.S4
-      } else if it.level == 3 {
-        13pt
-      } else {
-        font.csort.s4
-      },
-      weight: if it.level < 4 { "bold" } else { "regular" },
-    )
-
-    set block(
-      above: if it.level >= 2 { 24pt } else { 12pt },
-      below: if it.level >= 1 { 18pt } else { 6pt },
-    )
-
-    it
-  }
-
-  show heading.where(level: 1): it => {
-    counter(math.equation).update(0)
-
-    set align(center)
-    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
-
-    pagebreak(weak: true)
-    it
-  }
-
-  show title: it => {
-    set text(
-      font: font.group.hei,
-      size: font.csort.S2,
-    )
-
-    set par(
-      leading: leading * 1.25,
-    )
-
-    it
-  }
-
-  show math.equation: set text(
-    font: font.group.song-math,
-  )
-
-  show math.equation.where(block: false): set math.frac(style: "horizontal")
-
-  show: equate
-
-  set math.equation(
-    numbering: (..ns, loc: auto) => context [
-      (#(counter(heading).at(firstconcrete(loc, here())).at(0), ..ns.pos()).map(str).join("-"))
-    ],
-  )
-
-  // HACK Fixing equations' contextual numbering not following original heading count.
-  // Source: equate 0.3.2, edited.
-  show ref: it => {
-    if it.element == none { return it }
-    if it.element.func() != figure { return it }
-    if it.element.kind != math.equation { return it }
-    if it.element.body == none { return it }
-    if it.element.body.func() != metadata { return it }
-
-    let sub-numbering-state = state("equate/sub-numbering", false)
-
-    let nums = if sub-numbering-state.at(it.element.location()) {
-      it.element.body.value
-    } else {
-      (it.element.body.value.first() + it.element.body.value.slice(1).sum(default: 1) - 1,)
-    }
-
-    let num = numbering(
-      if type(it.element.numbering) == function {
-        it.element.numbering.with(loc: it.element.location())
-      } else { it.element.numbering },
-      ..nums,
-    )
-
-    let supplement = if it.supplement == auto {
-      it.element.supplement
-    } else if type(it.supplement) == function {
-      (it.supplement)(it.element)
-    } else {
-      it.supplement
-    }
-
-    link(it.element.location(), if supplement not in ([], none) [#supplement~#num] else [#num])
-  }
-
   body
 }
 // }}}
@@ -447,7 +485,8 @@
       "{1}.{2}",
       "{1}.{2}.{3}",
       (..ns) => context if text.lang == "zh" [
-        #h(-0.6em, weak: true)（#ns.at(3)）#h(-0.6em)
+        // #h(-0.6em, weak: true)（#ns.at(3)）#h(-0.6em)
+        （#ns.at(3)）#h(-0.3em)
       ] else [
         (#ns.at(3))
       ],
