@@ -22,9 +22,14 @@
   ),
 )
 
+
 #let figures = subpar.grid.with(
-  numbering: numbering-with-section("1-1"),
-  numbering-sub-ref: numbering-with-section("1-1 (a)"),
+  numbering: figure-numbering-with-section.with(
+    numbering: "1",
+  ),
+  numbering-sub-ref: figure-numbering-with-section.with(
+    numbering: "1 (a)",
+  ),
   grid-styles: it => {
     set std.grid(
       gutter: 1em,

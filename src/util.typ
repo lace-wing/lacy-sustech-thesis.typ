@@ -242,18 +242,64 @@
 
 #let config = state(ns(pkg-name, "config"), (:))
 
+#let section = state(ns(pkg-name, "section"), none)
+
 #let numbering-with-section(
-  numbering,
-) = if type(numbering) == str {
-  (..ns, loc: auto) => std.numbering(
-    numbering,
-    counter(heading).at(firstconcrete(loc, here())).at(0),
-    ..ns,
+  ..ns,
+  loc: auto,
+  numbering: none,
+  section-numbering: none,
+) = {
+  let loc = firstconcrete(loc, here())
+  let numf = if numbering == none {
+    (..sink) => none
+  } else if type(numbering) == str {
+    std.numbering.with(numbering)
+  } else {
+    numbering.with(loc: loc)
+  }
+  let secnumf = if section-numbering == none {
+    (..sink) => none
+  } else if type(section-numbering) == str {
+    std.numbering.with(section-numbering)
+  } else {
+    section-numbering.with(loc: loc)
+  }
+
+  secnumf(
+    counter(heading).at(loc).at(0),
   )
-} else {
-  (..ns, loc: auto) => numbering(
-    counter(heading).at(firstconcrete(loc, here())).at(0),
+  numf(
     ..ns,
   )
 }
+
+#let figure-numbering-with-section = numbering-with-section.with(
+  section-numbering: (
+    ..ns,
+    loc: auto,
+  ) => context {
+    let pattern = if section.at(loc) == "appendix" {
+      "A-"
+    } else {
+      "1-"
+    }
+    numbering(pattern, ..ns)
+  },
+)
+
+#let equation-numbering-with-section = numbering-with-section.with(
+  numbering: "1)",
+  section-numbering: (
+    ..ns,
+    loc: auto,
+  ) => context {
+    let pattern = if section.at(loc) == "appendix" {
+      "(A-"
+    } else {
+      "(1-"
+    }
+    numbering(pattern, ..ns)
+  },
+)
 

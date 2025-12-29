@@ -18,6 +18,53 @@
   20 ℃、1.84 g/ml，不应写成 20℃、1.84g/ml。
 ]
 
+#let config = (
+  title: (
+    zh: [狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记],
+    en: [Diary of a Normal Madman],
+  ),
+  display-title: (
+    en: ((upper[Diary of a ] + [Normal] + upper[ Madman],) * 4).join[ ],
+  ),
+  subtitle: (
+    zh: "救救孩子",
+    en: "Save the Children",
+  ),
+  candidate: (
+    zh: "鲁迅",
+    en: "Lu Xun",
+  ),
+  supervisor: (
+    zh: "周树人教授",
+    en: "Professor Zhou Shuren",
+  ),
+  associate-supervisor: (
+    zh: "周树人副教授",
+    en: "Professor Zhou Shuren",
+  ),
+  department: (
+    zh: "文学系",
+    en: "Department of Literature",
+  ),
+  degree: "master",
+  // 专业学位
+  degree-type: "professional",
+  // 学术学位
+  // degree-type: "academic",
+  discipline: (
+    zh: "创意写作",
+    en: "Creative Writing",
+  ),
+  domain: (
+    zh: "文学",
+    en: "Literature",
+  ),
+  print-date: datetime(year: 2025, month: 12, day: 12),
+  defence-date: datetime(year: 2026, month: 01, day: 06),
+  clc: "12345",
+  udc: "12345",
+)
+
 #show: style.generic
 
 #cp.setup(
@@ -170,6 +217,7 @@ some $"行内" e^(-1/2) + (3/4)/5 quad [a]$, @eq:2
 == #(("长",) * 80).join()
 
 = 记日记
+<sc:2>
 
 $
   integral_(a)^(b) e^(-x) dif x #<eq:2>
@@ -195,6 +243,8 @@ some fig @fg:1 and @fg:1-a
 
 Some sentence @carlson1981two[67-69].
 
+@sc:2[]
+
 #figure(
   caption: [Data],
   table(
@@ -217,4 +267,20 @@ Some sentence @carlson1981two[67-69].
 ====== 条目三
 
 #bibliography("refs.bib")
+
+#show: style.appendix
+
+= 附录说明
+
+$
+  y = x #<eq:3>
+$
+some eq @eq:3
+
+#sflorem(<fg:3>)
+some fig in appendix @fg:3
+
+== Lorem
+
+=== Lorem
 

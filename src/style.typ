@@ -65,7 +65,9 @@
   )
 
   set figure(
-    numbering: numbering-with-section("1-1"),
+    numbering: figure-numbering-with-section.with(
+      numbering: "1-1",
+    ),
   )
 
   show figure: it => {
@@ -127,6 +129,8 @@
       below: if it.level >= 1 { 18pt } else { 6pt },
     )
 
+    set heading(supplement: none) if it.level == 1
+
     it
   }
 
@@ -166,7 +170,7 @@
   show: equate
 
   set math.equation(
-    numbering: numbering-with-section("(1-1)"),
+    numbering: equation-numbering-with-section,
   )
 
   // HACK Fixing equations' contextual numbering not following original heading count.
@@ -498,4 +502,35 @@
   body
 }
 // }}}
+
+#let appendix(body) = {
+  section.update("appendix")
+
+  counter(heading).update(0)
+
+  set heading(
+    numbering: "A.1.",
+    supplement: context if text.lang == "zh" [附录] else [APPENDIX],
+  )
+
+  show heading.where(level: 1): set heading(
+    numbering: n => {
+      let num = numbering("A", n)
+      context if text.lang == "zh" [附录#num#h(0.7em)] else [APPENDIX #num]
+    },
+    supplement: none,
+  )
+
+  body
+}
+
+#let post-appendix(body) = {
+  set heading(
+    numbering: none,
+  )
+
+  show heading.where(level: 2): set align(center)
+
+  body
+}
 
