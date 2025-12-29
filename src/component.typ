@@ -7,6 +7,22 @@
 #import "util.typ": *
 #import "font.typ"
 
+// Unnumbered heading for conclusion. {{{
+#let heading-conclusion(
+  lang: "zh",
+) = {
+  set heading(
+    numbering: none,
+  )
+  if lang == "zh" [
+    = 结论
+  ] else [
+    = CONCLUSION
+  ]
+}
+// }}}
+
+// Recommended sizes for figure bodies. {{{
 #let fig-sizes = (
   small: (
     width: 20cm / 3,
@@ -21,8 +37,9 @@
     height: 9cm,
   ),
 )
+// }}}
 
-
+// Subfigure wrapper. {{{
 #let figures = subpar.grid.with(
   numbering: figure-numbering-with-section.with(
     numbering: "1",
@@ -42,133 +59,84 @@
     it
   },
 )
+// }}}
 
-#let setup(
-  loc: (:),
-  langs: ("zh", "en"),
-  title: none,
-  display-title: auto,
-  subtitle: none,
-  display-subtitle: auto,
-  candidate: none,
-  supervisor: none,
-  associate-supervisor: none,
-  department: none,
-  degree: "bachelor",
-  degree-type: "academic",
-  discipline: none, // Academic
-  domain: none, // Professional
-  institute: auto,
-  print-date: none,
-  defence-date: none,
-  clc: none, // Chinese Library Classificantion
-  udc: none, // Universal Decimal Classificantion
-  cuc: auto, // Chinese University Code
-  confidentiality: "公开",
+// Abstract, {{{
+#let abstract(
+  lang: "zh",
+  region: auto,
+  trans: none,
+  body,
 ) = {
-  //HACK later is replaced with argument-passing to each function, via wrappers
-  config.update(c => {
-    let loc = merge-dicts(loc-default, loc)
-    let langs = to-arr(langs)
+  set text(
+    ..args-lang(lang, region),
+  )
 
-    let title = to-dict(title)
-    let display-title = firstconcrete(
-      display-title,
-      (:),
-      ts: infer-display-title.with(title),
-    )
-    let subtitle = to-dict(subtitle)
-    let display-subtitle = firstconcrete(
-      display-subtitle,
-      (:),
-      ts: infer-display-title.with(title),
-    )
-    let candidate = to-dict(candidate)
-    let supervisor = to-dict(supervisor)
-    let associate-supervisor = to-dict(associate-supervisor)
-    let department = to-dict(department)
-    let discipline = to-dict(discipline)
-    let domain = to-dict(domain)
-    let institute = firstconcrete(
-      institute,
-      langs.map(l => (l, loc.at(l).sustech)).to-dict(),
-      ts: to-dict,
-    )
-    let cuc = firstconcrete(
-      cuc,
-      "14325",
-    )
-    c += (
-      loc: loc,
-      langs: langs,
-      title: title,
-      display-title: display-title,
-      subtitle: subtitle,
-      display-subtitle: display-subtitle,
-      candidate: candidate,
-      supervisor: supervisor,
-      associate-supervisor: associate-supervisor,
-      department: department,
-      degree: degree,
-      degree-type: degree-type,
-      discipline: discipline,
-      domain: domain,
-      institute: institute,
-      print-date: print-date,
-      defence-date: defence-date,
-      clc: clc,
-      udc: udc,
-      cuc: cuc,
-      confidentiality: confidentiality,
-    )
-    c
-  })
+  if lang == "zh" [
+    = 摘要
+  ] else [
+    = ABSTRACT
+  ]
+
+  body
+
+  set par(
+    first-line-indent: 0cm,
+  )
+  linebreak()
+  text(
+    font: if lang == "zh" { font.group.hei } else { font.group.song },
+    if lang == "zh" [关键词：] else [*Keywords: *],
+  )
+  trans.at(lang).keywords.join(if lang == "zh" [；] else [; ])
 }
+// }}}
 
-#let cover() = context {
-  let conf = config.get()
-  let loc = conf.loc
+// Cover. {{{
+#let cover(
+  degree: none,
+  print-date: none,
+  distribution: none,
+  trans: none,
+) = {
+  let zh = trans.zh
+  let en = trans.en
 
   let class = {
     set align(center)
     text(
       size: font.csort.s1,
       weight: "bold",
-      loc.zh.cover.at(conf.degree) + loc.zh.thesis,
+      zh.cover.at(degree) + zh.thesis,
     )
   }
 
   let titles = {
     set align(center)
 
-    ("zh", ..conf.langs)
-      .dedup()
-      .map(lang => {
-        if lang == "zh" {
-          set text(
-            font: font.group.hei,
-            size: font.csort.S2,
-            weight: "bold",
-          )
-          set par(
-            leading: 20pt * 1.25 - text.size,
-          )
+    set text(
+      font: font.group.hei,
+      size: font.csort.S2,
+      weight: "bold",
+    )
+    set par(
+      // HACK Approximation.
+      leading: font.csort.S2 * 0.75,
+    )
 
-          conf.title.at(lang)
-        } else {
-          set text(
-            size: font.csort.s2,
-            weight: "bold",
-          )
-          set par(
-            leading: 20pt * 1.25 - text.size,
-          )
+    zh.display-title
 
-          conf.display-title.at(lang)
-        }
-      })
-      .intersperse(parbreak())
-      .join()
+    parbreak()
+
+    set text(
+      size: font.csort.s2,
+    )
+    set par(
+      // HACK Approximation.
+      leading: font.csort.s2 * 0.75,
+    )
+
+    en.display-title
   }
 
   let credits = {
@@ -183,11 +151,11 @@
     grid(
       columns: (1fr, 1fr),
       inset: (x: 0.3em, y: 0.65em),
-      spreadl(5em)[研究生] + [：], conf.candidate.zh,
-      spreadl(5em)[指导教师] + [：], conf.supervisor.zh,
+      spreadl(5em)[研究生] + [：], trans.zh.candidate,
+      spreadl(5em)[指导教师] + [：], trans.zh.supervisor,
       ..(
-        if conf.associate-supervisor.len() > 0 {
-          (spreadl(5em)[副指导教师] + [：], conf.associate-supervisor.zh)
+        if trans.zh.associate-supervisor.len() > 0 {
+          (spreadl(5em)[副指导教师] + [：], trans.zh.associate-supervisor)
         }
       ),
     )
@@ -199,9 +167,9 @@
     )
     set align(center)
 
-    conf.institute.zh
+    trans.zh.institute
     linebreak()
-    cjk-date-format(conf.print-date)
+    cjk-date-format(print-date)
   }
 
   stack(
@@ -212,12 +180,27 @@
     credits,
     place-n-date,
   )
-  pagebreak()
-}
 
-#let title-page-zh() = context {
-  let conf = config.get()
-  let is-prof = conf.degree-type == "professional"
+  if distribution == "print" {
+    pagebreak(to: "odd")
+  }
+}
+// }}}
+
+// Chinese title page. {{{
+#let title-zh(
+  degree: none,
+  degree-type: none,
+  defence-date: none,
+  clc: none,
+  udc: none,
+  cuc: none,
+  confidentiality: none,
+  distribution: none,
+  trans: none,
+) = {
+  let is-prof = degree-type == "professional"
+  let zh = trans.zh
 
   let classifications = {
     set grid(
@@ -230,14 +213,14 @@
       grid(
         columns: 2,
         inset: (x: 0.3em, y: 0.65em),
-        [国内图书分类号：], conf.clc,
-        [国际图书分类号：], conf.udc,
+        [国内图书分类号：], clc,
+        [国际图书分类号：], udc,
       ),
       grid(
         columns: 2,
         inset: (x: 0.3em, y: 0.65em),
-        [学校代码：], conf.cuc,
-        [密级：], conf.confidentiality,
+        [学校代码：], cuc,
+        [密级：], confidentiality,
       ),
     )
   }
@@ -250,21 +233,25 @@
       size: font.csort.s2,
       weight: "bold",
       if is-prof {
-        conf.domain.zh
+        zh.domain
       } else {
-        conf.discipline.zh
+        zh.discipline
       }
-        + conf.loc.zh.at(conf.degree)
-        + if conf.degree-type == "professional" { "专业" }
-        + conf.loc.zh.thesis,
+        + zh.at(degree)
+        + if is-prof { "专业" }
+        + trans.zh.thesis,
     )
     parbreak()
-    text(
+    set text(
       font: font.group.hei,
       size: font.csort.S2,
       weight: "bold",
-      conf.title.zh,
     )
+    zh.title
+    if zh.display-subtitle != none {
+      parbreak()
+      zh.display-subtitle
+    }
   }
 
   let participants = {
@@ -283,27 +270,27 @@
       inset: (x: 0.3em, y: 0.65em),
       ..(
         [学位申请人],
-        conf.candidate.zh,
+        zh.candidate,
         [指导教师],
-        conf.supervisor.zh,
+        zh.supervisor,
         ..(
-          if conf.associate-supervisor != (:) {
-            ([副指导教师], conf.associate-supervisor.zh)
+          if zh.associate-supervisor != none {
+            ([副指导教师], zh.associate-supervisor)
           }
         ),
         ..(
           if is-prof {
-            ([专业类别], conf.domain.zh)
+            ([专业类别], zh.domain)
           } else {
-            ([学科名称], conf.discipline.zh)
+            ([学科名称], zh.discipline)
           }
         ),
         [答辩日期],
-        conf.defence-date.display("[year]年[month]月"),
+        defence-date.display("[year]年[month]月"),
         [培养单位],
-        conf.department.zh,
+        zh.department,
         [学位授予单位],
-        conf.institute.zh,
+        zh.institute,
       )
         .chunks(2, exact: true)
         .map(p => (spreadl(6em, p.at(0)) + [：], p.at(1)))
@@ -318,12 +305,23 @@
     discipline-n-title,
     participants,
   )
-  pagebreak()
-}
 
-#let title-page-en() = context {
-  let conf = config.get()
-  let is-prof = conf.degree-type == "professional"
+  if distribution == "print" {
+    pagebreak(to: "odd")
+  }
+}
+// }}}
+
+// English title page. {{{
+#let title-en(
+  degree: none,
+  degree-type: none,
+  defence-date: none,
+  distribution: none,
+  trans: none,
+) = {
+  let is-prof = degree-type == "professional"
+  let en = trans.en
 
   let title = {
     set text(
@@ -332,11 +330,15 @@
     )
     set align(center)
 
-    conf.display-title.en
+    en.display-title
+    if en.display-subtitle != none {
+      parbreak()
+      en.display-subtitle
+    }
   }
 
   let institute-n-degree = {
-    let degree-text = conf.loc.en.at(conf.degree)
+    let degree-text = en.at(degree)
     degree-text = upper(degree-text.at(0)) + degree-text.slice(1)
 
     set align(center)
@@ -346,13 +348,13 @@
 
     [
       A dissertation submitted to \
-      #conf.institute.en \
+      #en.institute \
       in partial fulfillment of the requirement \
       for the #(if is-prof [professional]) degree of \
-      #degree-text of #conf.domain.en \
+      #degree-text of #en.domain \
       #if not is-prof [
         in \
-        #conf.discipline.en
+        #en.discipline
       ]
     ]
   }
@@ -365,12 +367,12 @@
 
     [
       by \
-      #conf.candidate.en
-      #v(par.spacing)
-      Supervisor: #conf.supervisor.en
-      #if conf.associate-supervisor != (:) [
+      #en.candidate
+
+      Supervisor: #en.supervisor
+      #if en.associate-supervisor != none [
         \
-        Associate supervisor: #conf.associate-supervisor.en
+        Associate supervisor: #en.associate-supervisor
       ]
     ]
   }
@@ -381,7 +383,7 @@
       size: font.csort.s3,
     )
 
-    conf.print-date.display("[month repr:long] [year]")
+    defence-date.display("[month repr:long] [year]")
   }
 
   stack(
@@ -392,11 +394,18 @@
     participants,
     date,
   )
-}
 
-#let reviewers-n-commitee(
-  reviewers: (),
-  committee: (),
+  if distribution == "print" {
+    pagebreak(to: "odd")
+  }
+}
+// }}}
+
+// List of reviewers and committee members (Chinese). {{{
+#let reviewers-n-committee(
+  reviewers: none,
+  committee: none,
+  distribution: none,
 ) = {
   let committee = committee.map(i => if type(i) == array {
     (position: i.at(0), name: i.at(1), title: i.at(2), institute: i.at(3))
@@ -460,21 +469,25 @@
       ).flatten(),
     )
   ]
-  pagebreak()
+
+  if distribution == "print" {
+    pagebreak(to: "odd")
+  }
 }
+// }}}
 
+// Declarations of originality and authorization. {{{
 #let declarations(
+  lang: "zh",
   delay: 0,
-) = context {
-  let conf = config.get()
-  let lang = text.lang
-  let region = text.region
-
+  distribution: none,
+  trans: none,
+) = {
   let signature(
     of: none,
   ) = grid(
     columns: (2fr, 1fr),
-    rows: par.leading * 3,
+    rows: 2cm,
     align: left + horizon,
     ..(
       if lang == "zh" {
@@ -527,9 +540,9 @@
   )
 
   [
-    = #conf.loc.at(lang).declarations.title
+    = #trans.at(lang).declarations.title
 
-    == #conf.loc.at(lang).declarations.title-originality
+    == #trans.at(lang).declarations.title-originality
     #if lang == "zh" [
       本人郑重声明：所提交的学位论文是本人在导师指导下独立进行研究工作所取得的成果。除了特别加以标注和致谢的内容外，论文中不包含他人已发表或撰写过的研究成果。对本人的研究做出重要贡献的个人和集体，均已在文中作了明确的说明。本声明的法律结果由本人承担。
     ] else [
@@ -541,7 +554,7 @@
 
     #signature(of: author)
 
-    == #conf.loc.at(lang).declarations.title-authorization
+    == #trans.at(lang).declarations.title-authorization
     #if lang == "zh" [
       本人完全了解南方科技大学有关收集、保留、使用学位论文的规定，即：
       + 按学校规定提交学位论文的电子版本。
@@ -565,11 +578,16 @@
     #signature(of: author)
     #signature(of: supervisor)
   ]
-  pagebreak()
-}
 
+  if distribution == "print" {
+    pagebreak(to: "odd")
+  }
+}
+// }}}
+
+// Outline. {{{
 #let toc() = {
-  show outline.entry: it => context {
+  show outline.entry: it => {
     let fs = it.fields()
     let el = fs.element
     let rule(body) = {
@@ -608,4 +626,5 @@
 
   outline()
 }
+// }}}
 

@@ -1,5 +1,5 @@
 #let export = (
-  sustech: "南方科技大学",
+  institute: "南方科技大学",
   bachelor: "本科",
   master: "硕士",
   doctor: "博士",

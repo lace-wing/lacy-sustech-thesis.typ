@@ -210,6 +210,24 @@
   )
 }
 
+#let take-lang(
+  dict,
+  lang,
+) = {
+  dict
+    .pairs()
+    .map(
+      ((k, v)) => {
+        if type(v) == dictionary {
+          (k, v.at(lang, default: none))
+        }
+      },
+    )
+    .filter(i => i != none)
+    .to-dict()
+}
+
+
 #let infer-display-title(
   title,
   display-title,
@@ -238,7 +256,7 @@
 
 #let pkg-name = pkg.package.name
 
-#let loc-default = load-dir("./loc", "zh.typ", "en.typ")
+#let trans-default = load-dir("./loc", "zh.typ", "en.typ")
 
 #let config = state(ns(pkg-name, "config"), (:))
 

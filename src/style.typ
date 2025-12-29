@@ -7,17 +7,11 @@
 #import "util.typ": *
 #import "font.typ"
 
-/*
-（10） 正文：第 1 章（引言或绪论）、第 2 章、……、结论
-（12） 附录（如有）
-（13） 致谢
-（14） 个人简历、在学期间完成的相关学术成果
-*/
-
 /// Default leading.
 #let leading = 20pt - font.csort.s4
 
-#let header-heading = text(
+// Section title as header. {{{
+#let header-with-section = text(
   size: font.csort.S5,
   context {
     set align(center)
@@ -39,24 +33,38 @@
     )
   },
 )
+// }}}
 
+// Generic and begining. {{{
 #let generic(
+  lang: none,
+  region: none,
+  print-date: none,
+  bibliography-style: none,
+  description: none,
+  trans: none,
   body,
-  lang: "zh",
-  region: auto,
 ) = {
+  set document(
+    title: trans.at(lang).title,
+    author: trans.at(lang).candidate,
+    keywords: trans.at(lang).keywords,
+    date: print-date,
+    description: description,
+  )
+
   set page(
     paper: "a4",
     margin: 3cm,
     header-ascent: 0.8cm, // 3 - 2.2 = 0.8
     footer-descent: 0.8cm,
-    header: header-heading,
   )
 
   set text(
     font: font.group.song,
     size: font.csort.s4,
-    ..args-lang(lang, region),
+    lang: lang,
+    region: region,
   )
 
   set par(
@@ -208,8 +216,23 @@
     link(it.element.location(), if supplement not in ([], none) [#supplement~#num] else [#num])
   }
 
-  set bibliography(style: "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl")
-  set bibliography(style: "./gb-t-7714-2015-numeric.hayagriva-0.9.1.csl")
+  set outline(
+    indent: 1em,
+    depth: 3,
+    title: context if text.lang == "zh" [目录] else [TABLE OF CONTENTS],
+  )
+
+  set bibliography(
+    style: "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl",
+  ) if bibliography-style == "author-date"
+
+  set bibliography(
+    style: "./gb-t-7714-2015-numeric.hayagriva-0.9.1.csl",
+  ) if bibliography-style == "numeric"
+
+  set bibliography(
+    style: bibliography-style,
+  ) if bibliography-style not in ("numeric", "author-date")
 
   // HACK Fixing supplement.
   // Source: <https://forum.typst.app/t/how-to-cite-with-a-page-number-in-gb-t-7714-2015-style/1501/4>, edited.
@@ -361,126 +384,34 @@
 }
 // }}}
 
-/// Cover page. {{{
-#let cover(body) = {
-  set text(
-    font: font.group.song,
-  )
-
-  set page(
-    numbering: none,
-  )
-
-  body
-}
-// }}}
-
-/// Title pages. {{{
-#let title-page(body) = {
-  set page(
-    numbering: none,
-    header: none,
-  )
-
-  body
-}
-// }}}
-
-/// Reviewers and committee. {{{
-#let reviewers-n-committee(body) = {
-  set page(
-    numbering: none,
-    header: none,
-  )
-
-  set heading(
-    numbering: none,
-  )
-
-  body
-}
-// }}}
-
-/// Declarations. {{{
-#let declarations(
-  body,
-  lang: "zh",
-  region: auto,
-) = {
-  set page(
-    numbering: none,
-    header: none,
-  )
-
-  set heading(
-    numbering: none,
-  )
-
-  body
-}
-// }}}
-
-/// Abstracts. {{{
-#let abstract(
-  body,
-  lang: "zh",
-  region: auto,
-) = {
+// Begining of paginated content. {{{
+#let pagination-start(body) = {
   set page(
     numbering: "I",
-    header: header-heading,
   )
 
   set par(
     justify: true,
   )
 
-  set heading(
-    numbering: none,
-  )
+  counter(page).update(1)
 
   body
 }
 // }}}
 
-// Table of Content. {{{
-#let toc(body) = {
-  set page(
-    numbering: "I",
-    header: header-heading,
-  )
+// Body matter. {{{
+#let body-matter(
+  distribution: none,
+  body,
+) = {
+  if distribution == "print" {
+    pagebreak(to: "even")
+  }
 
-  set outline(
-    indent: 1em,
-    depth: 3,
-    title: context if text.lang == "zh" [目录] else [TABLE OF CONTENTS],
-  )
-
-  body
-}
-// }}}
-
-#let glossary(body) = {
-  set page(
-    numbering: "I",
-  )
-
-  set heading(
-    numbering: none,
-  )
-
-  body
-}
-
-/// Main body. {{{
-#let main(body) = {
   set page(
     numbering: "1",
-    header: header-heading,
-  )
-
-  set par(
-    justify: true,
+    header: header-with-section,
   )
 
   set heading(
@@ -499,10 +430,14 @@
     ),
   )
 
+  counter(page).update(1)
+  counter(heading).update(0)
+
   body
 }
 // }}}
 
+// Appendix. {{{
 #let appendix(body) = {
   section.update("appendix")
 
@@ -516,16 +451,23 @@
   show heading.where(level: 1): set heading(
     numbering: n => {
       let num = numbering("A", n)
-      context if text.lang == "zh" [附录#num#h(0.7em)] else [APPENDIX #num]
+      context if text.lang == "zh" [附录#num] else [APPENDIX #num]
     },
     supplement: none,
   )
 
   body
 }
+// }}}
 
+// Attachments (résumé, list of works). {{{
 #let post-appendix(body) = {
   set heading(
+    numbering: none,
+    supplement: none,
+  )
+
+  show heading.where(level: 1): set heading(
     numbering: none,
   )
 
@@ -533,4 +475,5 @@
 
   body
 }
+// }}}
 
