@@ -65,7 +65,7 @@
       trans: config.trans,
       distribution: config.distribution,
     ),
-    outline: outline(),
+    outline: toc(),
     conclusion: heading-conclusion(
       lang: config.lang,
     ),
