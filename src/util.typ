@@ -258,7 +258,7 @@
 
 #let pkg-name = pkg.package.name
 
-#let trans-default = load-dir("./loc", "zh.typ", "en.typ")
+#let trans-default = load-dir("./trans", "zh.typ", "en.typ")
 
 #let config = state(ns(pkg-name, "config"), (:))
 
