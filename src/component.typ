@@ -159,7 +159,13 @@
   trans: none,
 ) = {
   let (
+    lang,
     degree,
+    bachelor,
+    clc,
+    udc,
+    thesis-number,
+    confidentiality,
     print-date,
     print,
   ) = conf
@@ -167,17 +173,76 @@
     zh,
     en,
   ) = trans
+  let lt = trans.at(lang)
 
   let class = {
     set align(center)
-    text(
-      size: font.csort.s1,
-      weight: "bold",
-      zh.cover.at(degree) + zh.thesis,
-    )
+
+    if bachelor {
+      set grid(
+        align: (x, _) => if x == 0 { right } else { left },
+      )
+
+      let clctext = if lang == "zh" [分类号] else [CLC]
+      let notext = if lang == "zh" [编号] else [Number]
+      let cfdentry = if lang == "zh" {
+        (
+          spreadl(3em)[密级],
+          confidentiality,
+        )
+      } else {
+        let eb = box(stroke: black, width: 8pt, height: 8pt)
+        let cb = box(stroke: black, width: 8pt, height: 8pt, fill: black)
+        (
+          [Available for reference],
+          if confidentiality == "公开" [#cb Yes #eb No] else [#eb Yes #cb No],
+        )
+      }
+
+      stack(
+        dir: ltr,
+        spacing: 1fr,
+        grid(
+          columns: 2,
+          inset: (x: 0.3em, y: 0.65em),
+          clctext, clc,
+          context spreads(measure(clctext).width, "UDC"), udc,
+        ),
+        grid(
+          columns: 2,
+          inset: (x: 0.3em, y: 0.65em),
+          spreadl(3em, notext), thesis-number,
+          ..cfdentry,
+        ),
+      )
+
+      image(
+        "assets/sustech-logo." + lang + ".svg",
+        alt: if lang == "zh" {
+          "南方科技大学的标志"
+        } else {
+          "A logo of the Southern University of Science and Technology"
+        },
+      )
+    } else {
+      text(
+        size: font.csort.s1,
+        weight: "bold",
+        zh.cover.at(degree) + zh.thesis,
+      )
+    }
   }
 
-  let titles = {
+  let title = if bachelor {
+    align(
+      center,
+      text(
+        size: font.csort.s0,
+        weight: "bold",
+        if lang == "zh" [本科生毕业设计（论文）] else [Undergraduate Thesis],
+      ),
+    )
+  } else {
     set align(center)
 
     set text(
@@ -206,28 +271,112 @@
   }
 
   let credits = {
+    let entries = if bachelor {
+      (
+        (
+          lt.cover.title,
+          {
+            // Mixed alignment makes it a par.
+            set par(
+              first-line-indent: 0cm,
+            )
+            lt.display-title
+            if lt.display-subtitle != none {
+              align(right)[------#lt.display-subtitle]
+            }
+          },
+        ),
+        (
+          lt.cover.name,
+          lt.candidate,
+        ),
+        (
+          lt.cover.student-number,
+          conf.student-number,
+        ),
+        (
+          lt.cover.department,
+          lt.department,
+        ),
+        (
+          lt.cover.program,
+          lt.discipline,
+        ),
+        (
+          lt.cover.advisor,
+          lt.supervisor,
+        ),
+      )
+        .map(p => (
+          spreadl(4em, p.at(0)) + if lang == "zh" [：] else [: ],
+          p.at(1),
+        ))
+        .flatten()
+    } else {
+      (
+        spreadl(5em)[研究生] + [：],
+        trans.zh.candidate,
+        spreadl(5em)[指导教师] + [：],
+        trans.zh.supervisor,
+        ..(
+          if trans.zh.associate-supervisor.len() > 0 {
+            (spreadl(5em)[副指导教师] + [：], trans.zh.associate-supervisor)
+          }
+        ),
+      )
+    }
+
     set text(
-      size: font.csort.s2,
+      size: if bachelor {
+        font.csort.S3
+      } else {
+        font.csort.s2
+      },
+      weight: if bachelor {
+        "bold"
+      } else {
+        "normal"
+      },
     )
     set align(center)
     set grid(
-      align: (x, _) => if x == 0 { right } else { left },
+      align: (x, _) => if x == 0 {
+        right
+      } else {
+        // if bachelor {
+        //   center
+        // } else {
+        left
+        // }
+      },
     )
 
     grid(
-      columns: (1fr, 1fr),
+      columns: if bachelor {
+        (1fr, 2fr)
+      } else {
+        (1fr, 1fr)
+      },
       inset: (x: 0.3em, y: 0.65em),
-      spreadl(5em)[研究生] + [：], trans.zh.candidate,
-      spreadl(5em)[指导教师] + [：], trans.zh.supervisor,
-      ..(
-        if trans.zh.associate-supervisor.len() > 0 {
-          (spreadl(5em)[副指导教师] + [：], trans.zh.associate-supervisor)
-        }
-      ),
+      ..entries
     )
   }
 
-  let place-n-date = {
+  let place-n-date = if bachelor {
+    align(
+      center,
+      text(
+        size: font.csort.S3,
+        conf.print-date.display(
+          if lang == "zh" {
+            "[year]年[month]月[day]日"
+          } else {
+            "[month repr:long] [day]" + ord-en(conf.print-date.day()) + ", [year]"
+          },
+        ),
+      ),
+    )
+  } else {
     set text(
       size: font.csort.s2,
     )
@@ -242,7 +391,7 @@
     dir: ttb,
     spacing: 1fr,
     class,
-    titles,
+    title,
     credits,
     place-n-date,
   )
@@ -306,7 +455,7 @@
           right,
           text(
             size: font.csort.s2,
-            [------] + lt.display-subtitle,
+            [------#lt.display-subtitle],
           ),
         )
       }
@@ -340,7 +489,13 @@
         spacing: 1fr,
       )
     } else {
-      (..args) => block(args.pos().join()) + v(1fr)
+      (..args) => {
+        block(
+          width: 100%,
+          args.pos().join(),
+        )
+        v(1fr)
+      }
     }
 
     dfunc(

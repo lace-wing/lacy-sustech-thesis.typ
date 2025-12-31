@@ -84,6 +84,8 @@
   clc: none, // Chinese Library Classificantion
   udc: none, // Universal Decimal Classificantion
   cuc: "14325", // Chinese University Code
+  thesis-number: none, // Only seen on bachelor's cover
+  student-number: none, // Only on bachelor's cover
   confidentiality: "公开",
   publication-delay: none,
   reviewers: none,
@@ -111,6 +113,8 @@
       clc: clc,
       udc: udc,
       cuc: cuc,
+      thesis-number: thesis-number,
+      student-number: student-number,
       confidentiality: confidentiality,
       publication-delay: publication-delay,
       reviewers: firstof(reviewers, default: ()),
@@ -131,13 +135,19 @@
         display-title: firstconcrete(
           display-title,
           (:),
-          ts: infer-display-title.with(title),
+          ts: infer-display-title.with(
+            title,
+            bachelor: bachelor,
+          ),
         ),
         subtitle: to-dict(subtitle),
         display-subtitle: firstconcrete(
           display-subtitle,
           (:),
-          ts: infer-display-title.with(subtitle),
+          ts: infer-display-title.with(
+            subtitle,
+            bachelor: bachelor,
+          ),
         ),
         keywords: to-dict(keywords),
         candidate: to-dict(candidate),

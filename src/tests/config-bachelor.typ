@@ -19,12 +19,13 @@
   attachment-style,
 ) = setup(
   // distribution: "print",
+  lang: "en",
   title: (
     zh: [狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记],
     en: [Diary of a Normal Madman],
   ),
   display-title: (
-    en: ((upper[Diary of a ] + [Normal] + upper[ Madman],) * 4).join[ ],
+    // en: ((upper[Diary of a ] + [Normal] + upper[ Madman],) * 4).join[ ],
   ),
   subtitle: (
     zh: "救救孩子",
@@ -65,6 +66,8 @@
   print-date: datetime(year: 2025, month: 12, day: 12),
   clc: "12345",
   udc: "12345",
+  thesis-number: "8217365",
+  student-number: "028547",
 )
 
 

@@ -9,6 +9,12 @@
     bachelor: "本科",
     master: "硕士",
     doctor: "博士",
+    title: "Thesis Title",
+    name: "Student Name",
+    student-number: "Student ID",
+    department: "Department",
+    program: "Program",
+    advisor: "Thesis Advisor",
   ),
   declarations: (
     title: "DECLARATION OF ORIGINALITY AND AUTHORIZATION OF THESIS, SOUTHERN UNIVERSITY OF SCIENCE AND TECHNOLOGY",

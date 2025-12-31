@@ -230,8 +230,11 @@
 #let infer-display-title(
   title,
   display-title,
+  bachelor: false,
 ) = {
-  let ts(l, t) = if l == "en" {
+  let ts(l, t) = if bachelor {
+    (l, t)
+  } else if l == "en" {
     (l, upper(t))
   } else {
     (l, t)
