@@ -37,14 +37,18 @@
 
 // Generic and begining. {{{
 #let generic(
-  lang: none,
-  region: none,
-  print-date: none,
-  bibliography-style: none,
-  description: none,
+  conf: none,
   trans: none,
   body,
 ) = {
+  let (
+    lang,
+    region,
+    print-date,
+    bibliography-style,
+    description,
+  ) = conf
+
   set document(
     title: trans.at(lang).title,
     author: trans.at(lang).candidate,
@@ -385,7 +389,9 @@
 // }}}
 
 // Begining of paginated content. {{{
-#let pagination-start(body) = {
+#let pagination-start(
+  body,
+) = {
   set page(
     numbering: "I",
   )
@@ -402,9 +408,12 @@
 
 // Body matter. {{{
 #let body-matter(
-  distribution: none,
+  conf: none,
+  trans: none,
   body,
 ) = {
+  let (distribution,) = conf
+
   if distribution == "print" {
     pagebreak(to: "even")
   }
@@ -438,7 +447,9 @@
 // }}}
 
 // Appendix. {{{
-#let appendix(body) = {
+#let appendix(
+  body,
+) = {
   section.update("appendix")
 
   counter(heading).update(0)
@@ -461,7 +472,9 @@
 // }}}
 
 // Attachments (résumé, list of works). {{{
-#let post-appendix(body) = {
+#let post-appendix(
+  body,
+) = {
   set heading(
     numbering: none,
     supplement: none,

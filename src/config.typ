@@ -4,70 +4,55 @@
 
 // Binding config to elements. {{{
 #let bind-config(
-  config,
+  conf: none,
+  trans: none,
 ) = {
   (
+    // Util arguments. {{{
+    fig-sizes: fig-sizes,
+    // }}}
     // Element functions. {{{
     figures: figures,
     abstract: abstract.with(
-      trans: config.trans,
+      trans: trans,
     ),
     // }}}
     // Styles. {{{
     generic-style: generic.with(
-      lang: config.lang,
-      region: config.region,
-      bibliography-style: config.bibliography-style,
-      print-date: config.print-date,
-      description: config.description,
-      trans: config.trans,
+      conf: conf,
+      trans: trans,
     ),
     pagination-style: pagination-start,
     body-matter-style: body-matter.with(
-      distribution: config.distribution,
+      conf: conf,
     ),
     appendix-style: appendix,
     attachment-style: post-appendix,
     // }}}
     // Components. {{{
     cover: cover(
-      degree: config.degree,
-      print-date: config.print-date,
-      distribution: config.distribution,
-      trans: config.trans,
+      conf: conf,
+      trans: trans,
     ),
     title-zh: title-zh(
-      degree: config.degree,
-      degree-type: config.degree-type,
-      defence-date: config.defence-date,
-      clc: config.clc,
-      udc: config.udc,
-      cuc: config.cuc,
-      confidentiality: config.confidentiality,
-      distribution: config.distribution,
-      trans: config.trans,
+      conf: conf,
+      trans: trans,
     ),
     title-en: title-en(
-      degree: config.degree,
-      degree-type: config.degree-type,
-      defence-date: config.defence-date,
-      distribution: config.distribution,
-      trans: config.trans,
+      conf: conf,
+      trans: trans,
     ),
     reviewers-n-committee: reviewers-n-committee(
-      reviewers: config.reviewers,
-      committee: config.committee,
-      distribution: config.distribution,
+      conf: conf,
+      trans: trans,
     ),
     declarations: declarations(
-      lang: config.lang,
-      delay: config.publication-delay,
-      trans: config.trans,
-      distribution: config.distribution,
+      conf: conf,
+      trans: trans,
     ),
     outline: toc(),
     conclusion: heading-conclusion(
-      lang: config.lang,
+      conf: conf,
     ),
     // }}}
   )
@@ -107,23 +92,30 @@
   description: none,
 ) = {
   let (lang, region) = args-lang(lang, region).named()
-  bind-config((
-    lang: lang,
-    region: region,
-    distribution: distribution,
-    degree: degree,
-    degree-type: degree-type,
-    print-date: print-date,
-    defence-date: defence-date,
-    clc: clc,
-    udc: udc,
-    cuc: cuc,
-    confidentiality: confidentiality,
-    publication-delay: publication-delay,
-    reviewers: firstof(reviewers, default: ()),
-    committee: firstof(committee, default: ()),
-    bibliography-style: bibliography-style,
-    description: description,
+  bind-config(
+    conf: (
+      lang: lang,
+      region: region,
+      distribution: distribution,
+      degree: degree,
+      degree-type: degree-type,
+      print-date: print-date,
+      defence-date: defence-date,
+      clc: clc,
+      udc: udc,
+      cuc: cuc,
+      confidentiality: confidentiality,
+      publication-delay: publication-delay,
+      reviewers: firstof(reviewers, default: ()),
+      committee: firstof(committee, default: ()),
+      bibliography-style: bibliography-style,
+      description: description,
+      // Util
+      professional: degree-type == "professional",
+      bachelor: degree == "bachelor",
+      master: degree == "master",
+      doctor: degree == "doctor",
+    ),
     trans: {
       let base = merge-dicts(trans-default, trans)
       let expl = (
@@ -152,7 +144,7 @@
       }
       base
     },
-  ))
+  )
 }
 // }}}
 

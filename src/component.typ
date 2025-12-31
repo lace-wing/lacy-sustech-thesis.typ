@@ -9,12 +9,12 @@
 
 // Unnumbered heading for conclusion. {{{
 #let heading-conclusion(
-  lang: "zh",
+  conf: none,
 ) = {
   set heading(
     numbering: none,
   )
-  if lang == "zh" [
+  if conf.lang == "zh" [
     = 结论
   ] else [
     = CONCLUSION
@@ -94,13 +94,18 @@
 
 // Cover. {{{
 #let cover(
-  degree: none,
-  print-date: none,
-  distribution: none,
+  conf: none,
   trans: none,
 ) = {
-  let zh = trans.zh
-  let en = trans.en
+  let (
+    degree,
+    print-date,
+    distribution,
+  ) = conf
+  let (
+    zh,
+    en,
+  ) = trans
 
   let class = {
     set align(center)
@@ -189,18 +194,21 @@
 
 // Chinese title page. {{{
 #let title-zh(
-  degree: none,
-  degree-type: none,
-  defence-date: none,
-  clc: none,
-  udc: none,
-  cuc: none,
-  confidentiality: none,
-  distribution: none,
+  conf: none,
   trans: none,
 ) = {
-  let is-prof = degree-type == "professional"
-  let zh = trans.zh
+  let (
+    degree,
+    degree-type,
+    defence-date,
+    clc,
+    udc,
+    cuc,
+    confidentiality,
+    distribution,
+    professional,
+  ) = conf
+  let (zh,) = trans
 
   let classifications = {
     set grid(
@@ -232,13 +240,13 @@
       font: font.group.song,
       size: font.csort.s2,
       weight: "bold",
-      if is-prof {
+      if professional {
         zh.domain
       } else {
         zh.discipline
       }
         + zh.at(degree)
-        + if is-prof { "专业" }
+        + if professional { "专业" }
         + trans.zh.thesis,
     )
     parbreak()
@@ -279,7 +287,7 @@
           }
         ),
         ..(
-          if is-prof {
+          if professional {
             ([专业类别], zh.domain)
           } else {
             ([学科名称], zh.discipline)
@@ -314,14 +322,17 @@
 
 // English title page. {{{
 #let title-en(
-  degree: none,
-  degree-type: none,
-  defence-date: none,
-  distribution: none,
+  conf: none,
   trans: none,
 ) = {
-  let is-prof = degree-type == "professional"
-  let en = trans.en
+  let (
+    degree,
+    degree-type,
+    defence-date,
+    distribution,
+    professional,
+  ) = conf
+  let (en,) = trans
 
   let title = {
     set text(
@@ -350,9 +361,9 @@
       A dissertation submitted to \
       #en.institute \
       in partial fulfillment of the requirement \
-      for the #(if is-prof [professional]) degree of \
+      for the #(if professional [professional]) degree of \
       #degree-text of #en.domain \
-      #if not is-prof [
+      #if not professional [
         in \
         #en.discipline
       ]
@@ -403,10 +414,15 @@
 
 // List of reviewers and committee members (Chinese). {{{
 #let reviewers-n-committee(
-  reviewers: none,
-  committee: none,
-  distribution: none,
+  conf: none,
+  trans: none,
 ) = {
+  let (
+    reviewers,
+    committee,
+    distribution,
+  ) = conf
+
   let committee = committee.map(i => if type(i) == array {
     (position: i.at(0), name: i.at(1), title: i.at(2), institute: i.at(3))
   } else { i })
@@ -478,11 +494,15 @@
 
 // Declarations of originality and authorization. {{{
 #let declarations(
-  lang: "zh",
-  delay: 0,
-  distribution: none,
+  conf: none,
   trans: none,
 ) = {
+  let (
+    lang,
+    publication-delay,
+    distribution,
+  ) = conf
+
   let signature(
     of: none,
   ) = grid(
@@ -514,10 +534,13 @@
     let bnow = eb
     let blater = bnow
     let delay-text = box(stroke: (bottom: black), width: 1.5em)
-    if type(delay) == int {
-      if delay == 0 { bnow = cb } else {
+    if type(publication-delay) == int {
+      if publication-delay == 0 { bnow = cb } else {
         blater = cb
-        delay-text = box(stroke: (bottom: black), width: 1.5em, height: 9pt, align(center + top, str(delay)))
+        delay-text = box(stroke: (bottom: black), width: 1.5em, height: 9pt, align(
+          center + top,
+          str(publication-delay),
+        ))
       }
     }
     let now = if lang == "zh" [当年] else [upon submission]
