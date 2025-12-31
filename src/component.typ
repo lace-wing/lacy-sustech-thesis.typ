@@ -288,7 +288,7 @@
         ),
         (
           lt.cover.name,
-          lt.candidate,
+          spreadl(3em, lt.candidate),
         ),
         (
           lt.cover.student-number,
