@@ -227,7 +227,6 @@
     .to-dict()
 }
 
-
 #let infer-display-title(
   title,
   display-title,

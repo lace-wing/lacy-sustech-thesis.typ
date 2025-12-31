@@ -1,4 +1,4 @@
-#import "config.typ": *
+#import "config-bachelor.typ": *
 
 = 引言
 $

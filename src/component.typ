@@ -1,5 +1,3 @@
-/// Document components
-
 #import "@preview/conjak:0.2.3": *
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/subpar:0.2.2"
@@ -63,32 +61,95 @@
 
 // Abstract, {{{
 #let abstract(
-  lang: "zh",
+  lang: auto,
   region: auto,
+  conf: none,
   trans: none,
   body,
 ) = {
+  let (
+    lang,
+    region,
+  ) = args-lang(
+    firstconcrete(lang, conf.lang),
+    firstconcrete(region, conf.region),
+  ).named()
+  let (
+    print,
+    bachelor,
+  ) = conf
+
   set text(
     ..args-lang(lang, region),
   )
 
-  if lang == "zh" [
-    = 摘要
-  ] else [
-    = ABSTRACT
+  set text(
+    size: font.csort.S4,
+  ) if bachelor
+
+  set par(
+    first-line-indent: 2em,
+  ) if bachelor
+
+  // Override heading show rule that sets Latin with Hei.
+  let phfunc(body) = text(
+    font: font.group.hei-latin-song,
+    if bachelor {
+      text(
+        size: font.csort.S3,
+        weight: "bold",
+        [[#body] ],
+      )
+    } else {
+      body
+    },
+  )
+
+  let hfunc(body) = if bachelor {
+    // Still using heading so outline generates properly.
+    // The template ignores it however, so we instead exclude it at outline (toc)
+    show heading: it => phfunc(it.body)
+
+    [
+      // NOTE The spec and template do use half-width for zh...
+      = #body
+    ]
+  } else [
+    = #body
   ]
+
+  let hstr = if lang == "zh" [摘要] else [ABSTRACT]
+
+  hfunc(hstr)
 
   body
 
   set par(
     first-line-indent: 0cm,
   )
-  linebreak()
-  text(
-    font: if lang == "zh" { font.group.hei } else { font.group.song },
-    if lang == "zh" [关键词：] else [*Keywords: *],
+
+  if bachelor {
+    v(1fr)
+  } else {
+    linebreak()
+  }
+
+  phfunc(
+    if bachelor {
+      if lang == "zh" [关键词] else [Keywords]
+    } else {
+      if lang == "zh" [关键词：] else [*Keywords: *]
+    },
   )
   trans.at(lang).keywords.join(if lang == "zh" [；] else [; ])
+
+  if bachelor {
+    v(1fr)
+  }
+
+  pagebreak(
+    weak: true,
+  )
 }
 // }}}
 
@@ -100,7 +161,7 @@
   let (
     degree,
     print-date,
-    distribution,
+    print,
   ) = conf
   let (
     zh,
@@ -186,227 +247,295 @@
     place-n-date,
   )
 
-  if distribution == "print" {
+  if print {
     pagebreak(to: "odd")
   }
 }
 // }}}
 
-// Chinese title page. {{{
-#let title-zh(
+// Title page. {{{
+#let title-page(
+  lang: auto,
+  region: auto,
   conf: none,
   trans: none,
 ) = {
   let (
+    lang,
+    region,
+  ) = args-lang(
+    firstconcrete(lang, conf.lang),
+    firstconcrete(region, conf.region),
+  ).named()
+  let (
     degree,
-    degree-type,
+    bachelor,
     defence-date,
     clc,
     udc,
     cuc,
     confidentiality,
-    distribution,
+    print,
     professional,
   ) = conf
-  let (zh,) = trans
+  let lt = trans.at(lang)
 
-  let classifications = {
-    set grid(
-      align: (x, _) => if x == 0 { right } else { left },
-    )
+  set text(
+    lang: lang,
+    region: region,
+  )
 
-    stack(
-      dir: ltr,
-      spacing: 1fr,
-      grid(
-        columns: 2,
-        inset: (x: 0.3em, y: 0.65em),
-        [国内图书分类号：], clc,
-        [国际图书分类号：], udc,
-      ),
-      grid(
-        columns: 2,
-        inset: (x: 0.3em, y: 0.65em),
-        [学校代码：], cuc,
-        [密级：], confidentiality,
-      ),
-    )
-  }
-
-  let discipline-n-title = {
-    set align(center)
-
-    text(
-      font: font.group.song,
-      size: font.csort.s2,
-      weight: "bold",
-      if professional {
-        zh.domain
-      } else {
-        zh.discipline
-      }
-        + zh.at(degree)
-        + if professional { "专业" }
-        + trans.zh.thesis,
-    )
-    parbreak()
-    set text(
-      font: font.group.hei,
-      size: font.csort.S2,
-      weight: "bold",
-    )
-    zh.title
-    if zh.display-subtitle != none {
-      parbreak()
-      zh.display-subtitle
-    }
-  }
-
-  let participants = {
-    set align(center)
-    set text(
-      size: font.csort.S4,
-    )
-    set grid(
-      align: (x, _) => if x == 0 { right } else { left },
-    )
-
-    show grid.cell.where(x: 0): set text(font: font.group.hei)
-
-    grid(
-      columns: (1fr, 1fr),
-      inset: (x: 0.3em, y: 0.65em),
-      ..(
-        [学位申请人],
-        zh.candidate,
-        [指导教师],
-        zh.supervisor,
-        ..(
-          if zh.associate-supervisor != none {
-            ([副指导教师], zh.associate-supervisor)
-          }
-        ),
-        ..(
-          if professional {
-            ([专业类别], zh.domain)
-          } else {
-            ([学科名称], zh.discipline)
-          }
-        ),
-        [答辩日期],
-        defence-date.display("[year]年[month]月"),
-        [培养单位],
-        zh.department,
-        [学位授予单位],
-        zh.institute,
+  if bachelor {
+    // Bachelor's {{{
+    let title = {
+      set text(
+        font: font.group.hei-latin-song,
       )
-        .chunks(2, exact: true)
-        .map(p => (spreadl(6em, p.at(0)) + [：], p.at(1)))
-        .flatten(),
-    )
-  }
 
-  stack(
-    dir: ttb,
-    spacing: 1fr,
-    classifications,
-    discipline-n-title,
-    participants,
-  )
+      align(
+        center,
+        text(
+          size: font.csort.S2,
+          lt.display-title,
+        ),
+      )
 
-  if distribution == "print" {
-    pagebreak(to: "odd")
-  }
-}
-// }}}
+      if lt.display-subtitle != none {
+        parbreak()
+        align(
+          right,
+          text(
+            size: font.csort.s2,
+            [------] + lt.display-subtitle,
+          ),
+        )
+      }
+    }
 
-// English title page. {{{
-#let title-en(
-  conf: none,
-  trans: none,
-) = {
-  let (
-    degree,
-    degree-type,
-    defence-date,
-    distribution,
-    professional,
-  ) = conf
-  let (en,) = trans
+    let participants = {
+      set align(center)
 
-  let title = {
-    set text(
-      size: font.csort.S2,
-      weight: "bold",
-    )
-    set align(center)
-
-    en.display-title
-    if en.display-subtitle != none {
+      spreadl(
+        3em,
+        text(
+          size: font.csort.S4,
+          lt.candidate,
+        ),
+      )
       parbreak()
-      en.display-subtitle
+      text(
+        font: font.group.kai,
+        size: font.csort.s4,
+        if lang == "zh" [
+          （#lt.department，指导教师：#lt.supervisor）
+        ] else [
+          (#lt.department, Supervisor: #lt.supervisor)
+        ],
+      )
+    }
+
+    let dfunc = if print {
+      stack.with(
+        dir: ttb,
+        spacing: 1fr,
+      )
+    } else {
+      (..args) => block(args.pos().join()) + v(1fr)
+    }
+
+    dfunc(
+      title,
+      participants,
+    )
+
+    // }}}
+  } else {
+    if lang == "zh" {
+      // Master's & doctor's zh {{{
+      let classifications = {
+        set grid(
+          align: (x, _) => if x == 0 { right } else { left },
+        )
+
+        stack(
+          dir: ltr,
+          spacing: 1fr,
+          grid(
+            columns: 2,
+            inset: (x: 0.3em, y: 0.65em),
+            [国内图书分类号：], clc,
+            [国际图书分类号：], udc,
+          ),
+          grid(
+            columns: 2,
+            inset: (x: 0.3em, y: 0.65em),
+            [学校代码：], cuc,
+            [密级：], confidentiality,
+          ),
+        )
+      }
+
+      let discipline-n-title = {
+        set align(center)
+
+        text(
+          font: font.group.song,
+          size: font.csort.s2,
+          weight: "bold",
+          if professional {
+            lt.domain
+          } else {
+            lt.discipline
+          }
+            + lt.at(degree)
+            + if professional { "专业" }
+            + lt.thesis,
+        )
+        parbreak()
+        set text(
+          font: font.group.hei,
+          size: font.csort.S2,
+          weight: "bold",
+        )
+        lt.title
+        if lt.display-subtitle != none {
+          parbreak()
+          lt.display-subtitle
+        }
+      }
+
+      let participants = {
+        set align(center)
+        set text(
+          size: font.csort.S4,
+        )
+        set grid(
+          align: (x, _) => if x == 0 { right } else { left },
+        )
+
+        show grid.cell.where(x: 0): set text(
+          font: font.group.hei,
+        )
+
+        grid(
+          columns: (1fr, 1fr),
+          inset: (x: 0.3em, y: 0.65em),
+          ..(
+            [学位申请人],
+            lt.candidate,
+            [指导教师],
+            lt.supervisor,
+            ..(
+              if lt.associate-supervisor != none {
+                ([副指导教师], lt.associate-supervisor)
+              }
+            ),
+            ..(
+              if professional {
+                ([专业类别], lt.domain)
+              } else {
+                ([学科名称], lt.discipline)
+              }
+            ),
+            [答辩日期],
+            defence-date.display("[year]年[month]月"),
+            [培养单位],
+            lt.department,
+            [学位授予单位],
+            lt.institute,
+          )
+            .chunks(2, exact: true)
+            .map(p => (spreadl(6em, p.at(0)) + [：], p.at(1)))
+            .flatten(),
+        )
+      }
+
+      stack(
+        dir: ttb,
+        spacing: 1fr,
+        classifications,
+        discipline-n-title,
+        participants,
+      )
+      // }}}
+    } else {
+      // Master's & doctor's en {{{
+      let title = {
+        set text(
+          size: font.csort.S2,
+          weight: "bold",
+        )
+        set align(center)
+
+        lt.display-title
+        if lt.display-subtitle != none {
+          parbreak()
+          lt.display-subtitle
+        }
+      }
+
+      let institute-n-degree = {
+        let degree-text = lt.at(degree)
+        degree-text = upper(degree-text.at(0)) + degree-text.slice(1)
+
+        set align(center)
+        set text(
+          size: font.csort.s3,
+        )
+
+        [
+          A dissertation submitted to \
+          #lt.institute \
+          in partial fulfillment of the requirement \
+          for the #(if professional [professional]) degree of \
+          #degree-text of #lt.domain \
+          #if not professional [
+            in \
+            #lt.discipline
+          ]
+        ]
+      }
+
+      let participants = {
+        set align(center)
+        set text(
+          size: font.csort.s3,
+        )
+
+        [
+          by \
+          #lt.candidate
+
+          Supervisor: #lt.supervisor
+          #if lt.associate-supervisor != none [
+            \
+            Associate supervisor: #lt.associate-supervisor
+          ]
+        ]
+      }
+
+      let date = {
+        set align(center)
+        set text(
+          size: font.csort.s3,
+        )
+
+        defence-date.display("[month repr:long] [year]")
+      }
+
+      stack(
+        dir: ttb,
+        spacing: 1fr,
+        title,
+        institute-n-degree,
+        participants,
+        date,
+      )
+      // }}}
     }
   }
 
-  let institute-n-degree = {
-    let degree-text = en.at(degree)
-    degree-text = upper(degree-text.at(0)) + degree-text.slice(1)
-
-    set align(center)
-    set text(
-      size: font.csort.s3,
-    )
-
-    [
-      A dissertation submitted to \
-      #en.institute \
-      in partial fulfillment of the requirement \
-      for the #(if professional [professional]) degree of \
-      #degree-text of #en.domain \
-      #if not professional [
-        in \
-        #en.discipline
-      ]
-    ]
-  }
-
-  let participants = {
-    set align(center)
-    set text(
-      size: font.csort.s3,
-    )
-
-    [
-      by \
-      #en.candidate
-
-      Supervisor: #en.supervisor
-      #if en.associate-supervisor != none [
-        \
-        Associate supervisor: #en.associate-supervisor
-      ]
-    ]
-  }
-
-  let date = {
-    set align(center)
-    set text(
-      size: font.csort.s3,
-    )
-
-    defence-date.display("[month repr:long] [year]")
-  }
-
-  stack(
-    dir: ttb,
-    spacing: 1fr,
-    title,
-    institute-n-degree,
-    participants,
-    date,
-  )
-
-  if distribution == "print" {
+  if print {
     pagebreak(to: "odd")
   }
 }
@@ -420,7 +549,7 @@
   let (
     reviewers,
     committee,
-    distribution,
+    print,
   ) = conf
 
   let committee = committee.map(i => if type(i) == array {
@@ -486,7 +615,7 @@
     )
   ]
 
-  if distribution == "print" {
+  if print {
     pagebreak(to: "odd")
   }
 }
@@ -500,7 +629,7 @@
   let (
     lang,
     publication-delay,
-    distribution,
+    print,
   ) = conf
 
   let signature(
@@ -602,24 +731,90 @@
     #signature(of: supervisor)
   ]
 
-  if distribution == "print" {
-    pagebreak(to: "odd")
-  }
+  pagebreak(
+    weak: true,
+    ..(
+      if print {
+        (to: "odd")
+      }
+    ),
+  )
 }
 // }}}
 
 // Outline. {{{
-#let toc() = {
+#let toc(
+  conf: none,
+) = {
+  let (
+    lang,
+    bachelor,
+  ) = conf
+
+  set text(
+    size: font.csort.S4,
+  ) if bachelor
+
+  // HACK show heading: set text(size: ...) does not seem to work.
+  // It is fine since we do not outline the outline itself.
+  let ohfunc(body) = if bachelor {
+    text(
+      size: font.csort.s2,
+      body,
+    )
+  } else {
+    body
+  }
+
+  set outline(
+    indent: if bachelor {
+      0cm
+    } else {
+      1em
+    },
+    depth: if bachelor {
+      2
+    } else {
+      3
+    },
+    title: ohfunc(if lang == "zh" [目录] else [TABLE OF CONTENTS]),
+  )
+
   show outline.entry: it => {
+    if bachelor {
+      if it.level == 1 {
+        strong(it)
+      } else {
+        it
+      }
+      return
+    }
+
     let fs = it.fields()
     let el = fs.element
+
+    // Figured that we can do better than the template...
+    // if bachelor and el in query(selector(heading).before(here())) {
+    //   return
+    // }
+
     let rule(body) = {
       set text(
-        font: font.group.hei-latin-song,
-      ) if fs.level == 1
+        font: if bachelor {
+          font.group.song
+        } else {
+          font.group.hei-latin-song
+        },
+        weight: if bachelor {
+          "bold"
+        } else {
+          "normal"
+        },
+      ) if it.level == 1
       show regex(`[0-9\p{Latin}]`.text): set text(
         weight: "bold",
-      )
+      ) if not bachelor
+
       body
     }
 
@@ -628,7 +823,7 @@
       grid(
         columns: (auto, auto, 1fr, auto),
         {
-          h((fs.level - 1) * outline.indent)
+          h((it.level - 1) * outline.indent)
           let prefix = it.prefix()
           if prefix != none {
             show: rule
@@ -648,6 +843,10 @@
   }
 
   outline()
+
+  pagebreak(
+    weak: true,
+  )
 }
 // }}}
 

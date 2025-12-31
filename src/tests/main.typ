@@ -1,14 +1,20 @@
-#import "config.typ": *
+#import "config-bachelor.typ": *
 
 #show: generic-style
 
 #cover
-#title-zh
-#title-en
-#reviewers-n-committee
+
 #declarations
 
-#show: pagination-style
+#title-page()
+
+// #title-page(lang: "en")
+
+// #reviewers-n-committee
+
+// #declarations
+
+#show: front-matter-paginated-style
 
 #abstract(lang: "zh")[
   #include "abstract-zh.typ"

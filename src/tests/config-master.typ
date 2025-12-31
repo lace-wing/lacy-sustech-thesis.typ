@@ -14,7 +14,7 @@
   conclusion,
   // Styles.
   generic-style,
-  pagination-style,
+  front-matter-paginated-style,
   body-matter-style,
   appendix-style,
   attachment-style,

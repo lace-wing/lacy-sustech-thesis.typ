@@ -13,7 +13,12 @@
     // }}}
     // Element functions. {{{
     figures: figures,
+    title-page: title-page.with(
+      conf: conf,
+      trans: trans,
+    ),
     abstract: abstract.with(
+      conf: conf,
       trans: trans,
     ),
     // }}}
@@ -22,7 +27,9 @@
       conf: conf,
       trans: trans,
     ),
-    pagination-style: pagination-start,
+    front-matter-paginated-style: front-matter-paginated.with(
+      conf: conf,
+    ),
     body-matter-style: body-matter.with(
       conf: conf,
     ),
@@ -34,14 +41,6 @@
       conf: conf,
       trans: trans,
     ),
-    title-zh: title-zh(
-      conf: conf,
-      trans: trans,
-    ),
-    title-en: title-en(
-      conf: conf,
-      trans: trans,
-    ),
     reviewers-n-committee: reviewers-n-committee(
       conf: conf,
       trans: trans,
@@ -50,7 +49,9 @@
       conf: conf,
       trans: trans,
     ),
-    outline: toc(),
+    outline: toc(
+      conf: conf,
+    ),
     conclusion: heading-conclusion(
       conf: conf,
     ),
@@ -92,6 +93,12 @@
   description: none,
 ) = {
   let (lang, region) = args-lang(lang, region).named()
+  let professional = degree-type == "professional"
+  let bachelor = degree == "bachelor"
+  let master = degree == "master"
+  let doctor = degree == "doctor"
+  let print = distribution == "print"
+
   bind-config(
     conf: (
       lang: lang,
@@ -111,10 +118,11 @@
       bibliography-style: bibliography-style,
       description: description,
       // Util
-      professional: degree-type == "professional",
-      bachelor: degree == "bachelor",
-      master: degree == "master",
-      doctor: degree == "doctor",
+      professional: professional,
+      bachelor: bachelor,
+      master: master,
+      doctor: doctor,
+      print: print,
     ),
     trans: {
       let base = merge-dicts(trans-default, trans)

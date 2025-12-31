@@ -1,5 +1,3 @@
-/// Styles, re-appliable.
-
 #import "@preview/hydra:0.6.2": hydra
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/equate:0.3.2": equate
@@ -47,6 +45,7 @@
     print-date,
     bibliography-style,
     description,
+    bachelor,
   ) = conf
 
   set document(
@@ -156,7 +155,10 @@
     set align(center)
     show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
 
-    pagebreak(weak: true)
+    if not bachelor {
+      pagebreak(weak: true)
+    }
+
     it
   }
 
@@ -219,12 +221,6 @@
 
     link(it.element.location(), if supplement not in ([], none) [#supplement~#num] else [#num])
   }
-
-  set outline(
-    indent: 1em,
-    depth: 3,
-    title: context if text.lang == "zh" [目录] else [TABLE OF CONTENTS],
-  )
 
   set bibliography(
     style: "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl",
@@ -389,9 +385,16 @@
 // }}}
 
 // Begining of paginated content. {{{
-#let pagination-start(
+#let front-matter-paginated(
+  conf: none,
   body,
 ) = {
+  let (bachelor,) = conf
+
+  if bachelor {
+    return body
+  }
+
   set page(
     numbering: "I",
   )
@@ -412,9 +415,9 @@
   trans: none,
   body,
 ) = {
-  let (distribution,) = conf
+  let (print,) = conf
 
-  if distribution == "print" {
+  if print {
     pagebreak(to: "even")
   }
 
