@@ -398,7 +398,7 @@
     place-n-date,
   )
 
-  if print {
+  if print and not bachelor {
     pagebreak(to: "odd")
   }
 }
@@ -485,7 +485,7 @@
       )
     }
 
-    let dfunc = if print {
+    let dfunc = if print and not bachelor {
       stack.with(
         dir: ttb,
         spacing: 1fr,
@@ -692,7 +692,7 @@
     }
   }
 
-  if print {
+  if print and not bachelor {
     pagebreak(to: "odd")
   }
 }
@@ -707,6 +707,7 @@
     reviewers,
     committee,
     print,
+    bachelor,
   ) = conf
 
   let committee = committee.map(i => if type(i) == array {
@@ -772,7 +773,7 @@
     )
   ]
 
-  if print {
+  if print and not bachelor {
     pagebreak(to: "odd")
   }
 }
@@ -944,7 +945,7 @@
   pagebreak(
     weak: true,
     ..(
-      if print {
+      if print and not bachelor {
         (to: "odd")
       }
     ),

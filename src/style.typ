@@ -45,7 +45,9 @@
     print-date,
     bibliography-style,
     description,
+    print,
     bachelor,
+    binding-guide,
   ) = conf
 
   set document(
@@ -58,10 +60,48 @@
 
   set page(
     paper: "a4",
-    margin: 3cm,
-    header-ascent: 0.8cm, // 3 - 2.2 = 0.8
-    footer-descent: 0.8cm,
+    margin: if bachelor {
+      if print {
+        (
+          top: 2.5cm,
+          bottom: 2cm,
+          inside: 3cm,
+          outside: 2.5cm,
+        )
+      } else {
+        (
+          top: 2.5cm,
+          bottom: 2cm,
+          rest: 2.5cm,
+        )
+      }
+    } else {
+      3cm
+    },
+    ..(
+      if not bachelor {
+        (
+          header-ascent: 0.8cm, // 3 - 2.2 = 0.8
+          footer-descent: 0.8cm,
+        )
+      }
+    ),
   )
+
+  set page(
+    background: context {
+      let i = calc.rem(here().page(), 2)
+      place(
+        (right, left).at(i),
+        dx: 0.5cm * (-1, 1).at(i),
+        line(
+          angle: 90deg,
+          length: 100%,
+          stroke: black.transparentize(80%) + 0.5pt,
+        ),
+      )
+    },
+  ) if print and bachelor and binding-guide
 
   set text(
     font: font.group.song,
@@ -436,7 +476,7 @@
     bachelor,
   ) = conf
 
-  if print {
+  if print and not bachelor {
     pagebreak(to: "even")
   }
 
@@ -451,7 +491,7 @@
 
   set heading(
     numbering: if bachelor {
-      // NOTE Choosing the simplest.
+      // NOTE Choosing the simplest out of the four.
       "1."
     } else {
       numbly(

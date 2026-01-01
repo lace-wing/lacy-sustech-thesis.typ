@@ -95,6 +95,7 @@
   bibliography-style: "numeric",
   // Extra...
   description: none,
+  binding-guide: true,
 ) = {
   let (lang, region) = args-lang(lang, region).named()
   let professional = degree-type == "professional"
@@ -129,6 +130,7 @@
       master: master,
       doctor: doctor,
       print: print,
+      binding-guide: binding-guide,
     ),
     trans: {
       let base = merge-dicts(trans-default, trans)

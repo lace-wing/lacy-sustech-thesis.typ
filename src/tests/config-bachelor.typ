@@ -18,7 +18,8 @@
   appendix-style,
   attachment-style,
 ) = setup(
-  // distribution: "print",
+  distribution: "print",
+  // binding-guide: false,
   // lang: "en",
   title: (
     zh: [狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记],
