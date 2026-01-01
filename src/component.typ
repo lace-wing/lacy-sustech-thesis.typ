@@ -21,6 +21,8 @@
 // }}}
 
 // Recommended sizes for figure bodies. {{{
+
+/// 研究生、博士论文中建议使用的图片尺寸，有小、中、大三种，即 `small`、`medium`、`large`。
 #let fig-sizes = (
   small: (
     width: 20cm / 3,
@@ -38,6 +40,29 @@
 // }}}
 
 // Subfigure wrapper. {{{
+
+/// 实现子图的帮手。
+///
+/// Typst 的 `figure` 还不能做子图，得用这个。
+///
+/// = 用法
+/// 按照 subpar:0.2.2 的 `grid` 使用，减去参数 `numbering`、`numbering-sub-ref`、`grid-styles`。
+///
+/// 一般只用到 `columns`、`caption`、`label`。
+/// - `columns` 与 `table` 的 `columns` 一样，可以是一个数字（有几列）或长度的数组（每一列有多宽）
+/// - `caption` 是总图注
+/// - `label` 是总图标签
+/// 
+/// = 示例
+/// ```example
+/// #figures(
+///   caption: [母图],
+///   columns: 2,
+///   figure(/* ... */), <fg:child-1>,
+///   figure(/* ... */),
+///   label: <fg:parent>
+/// )
+/// ```
 #let figures = subpar.grid.with(
   numbering: figure-numbering-with-chapter.with(
     numbering: "1",
@@ -60,6 +85,18 @@
 // }}}
 
 // Abstract, {{{
+
+/// 生成摘要，包括对应语言的标题和关键词列表。
+///
+/// = 用法
+/// 直接填入摘要内容。若摘要的语言不是论文语言，则额外填入语言，甚至地区。
+///
+/// - lang (auto, str): 语言，默认为论文的语言
+/// - region (auto, str): 地区，默认为 `lang` 最常对应的地区，或若 `lang` 是论文语言，默认为论文的地区
+/// - conf (dictionary): 配置；大概不用动这个
+/// - trans (dictionary): 翻译；大概不用动这个 
+/// - body (content): 摘要内容，不含标题或关键词
+/// -> content
 #let abstract(
   lang: auto,
   region: auto,
@@ -405,18 +442,30 @@
 // }}}
 
 // Title page. {{{
+
+/// 生成题名页。
+///
+/// = 用法
+/// 直接调用。若题名页的语言不是论文语言，则额外填入语言，甚至地区。
+///
+/// - lang (auto, str): 语言，默认为论文的语言
+/// - region (auto, str): 地区，默认为 `lang` 最常对应的地区，或若 `lang` 是论文语言，默认为论文的地区
+/// - conf (dictionary): 配置；大概不用动这个
+/// - trans (dictionary): 翻译；大概不用动这个 
+/// -> content
 #let title-page(
   lang: auto,
   region: auto,
   conf: none,
   trans: none,
 ) = {
-  let (
+  let lang = firstconcrete(lang, conf.lang)
+  let (region,) = args-lang(
     lang,
-    region,
-  ) = args-lang(
-    firstconcrete(lang, conf.lang),
-    firstconcrete(region, conf.region),
+    firstconcrete(
+      region,
+      default: if lang == conf.lang { conf.region } else { auto },
+    ),
   ).named()
   let (
     degree,

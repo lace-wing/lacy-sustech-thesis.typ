@@ -60,10 +60,6 @@
     zh: "创意写作",
     en: "Creative Writing",
   ),
-  domain: (
-    zh: "文学",
-    en: "Literature",
-  ),
   print-date: datetime(year: 2025, month: 12, day: 12),
   clc: "12345",
   udc: "12345",

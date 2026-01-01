@@ -34,6 +34,19 @@
 // }}}
 
 // Generic and begining. {{{
+
+/// 论文大体样式，在开头施加于所有内容。
+///
+/// = 示例
+/// ```example
+/// #show: generic-style
+/// // ...
+/// ```
+///
+/// - conf (dictionary): 配置，大概不用动这个
+/// - trans (dictionary): 翻译，大概不用动这个
+/// - body (content): 要施加样式的内容
+/// -> content
 #let generic(
   conf: none,
   trans: none,
@@ -447,6 +460,23 @@
 // }}}
 
 // Begining of paginated content. {{{
+
+/// 论文前言有页码的样式，在前言有页码时施加于所有内容。本科论文中无效。
+///
+/// = 示例
+/// ```example
+/// // ...
+/// #show: front-matter-paginated-style
+/// #abstract[
+///   #include "abstract-zh.typ"
+/// ]
+/// // ...
+/// ```
+///
+/// - conf (dictionary): 配置，大概不用动这个
+/// - trans (dictionary): 翻译，大概不用动这个
+/// - body (content): 要施加样式的内容
+/// -> content
 #let front-matter-paginated(
   conf: none,
   body,
@@ -472,6 +502,21 @@
 // }}}
 
 // Body matter. {{{
+
+/// 论文正文的样式，在正文前施加于所有内容。
+///
+/// = 示例
+/// ```example
+/// // ...
+/// #show: body-matter-style
+/// #include "chapter-1.typ"
+/// // ...
+/// ```
+///
+/// - conf (dictionary): 配置，大概不用动这个
+/// - trans (dictionary): 翻译，大概不用动这个
+/// - body (content): 要施加样式的内容
+/// -> content
 #let body-matter(
   conf: none,
   trans: none,
@@ -524,6 +569,20 @@
 // }}}
 
 // Appendix. {{{
+
+/// 论文附录的样式，在附录前施加于所有内容。
+///
+/// = 示例
+/// ```example
+/// // ...
+/// #show: appendix-style
+/// #include "appendix.typ"
+/// // ...
+/// ```
+///
+/// - conf (dictionary): 配置，大概不用动这个
+/// - body (content): 要施加样式的内容
+/// -> content
 #let appendix(
   conf: none,
   body,
@@ -570,6 +629,19 @@
 // }}}
 
 // Attachments (résumé, list of works). {{{
+
+/// 论文附录后的样式，在附录后施加于所有内容。
+///
+/// = 示例
+/// ```example
+/// // ...
+/// #show: attachment-style
+/// #include "acknowledgement.typ"
+/// // ...
+/// ```
+///
+/// - body (content): 要施加样式的内容
+/// -> content
 #let post-appendix(
   body,
 ) = {
