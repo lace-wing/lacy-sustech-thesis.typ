@@ -256,7 +256,7 @@
       )
 
       image(
-        "assets/sustech-logo." + lang + ".svg",
+        "assets/" + lang + ".sustech-logo.svg",
         alt: if lang == "zh" {
           "南方科技大学的标志"
         } else {
