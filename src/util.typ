@@ -262,13 +262,15 @@
 
 #let config = state(ns(pkg-name, "config"), (:))
 
-#let doc-state = state(ns(pkg-name, "section"), none)
+#let doc-state = state(ns(pkg-name, "state"), none)
+
+#let doc-class = state(ns(pkg-name, "class"), none)
 
 #let numbering-with-chapter(
   ..ns,
   loc: auto,
   numbering: none,
-  section-numbering: none,
+  chapter-numbering: none,
 ) = {
   let loc = firstconcrete(loc, here())
   let numf = if numbering == none {
@@ -278,16 +280,18 @@
   } else {
     numbering.with(loc: loc)
   }
-  let secnumf = if section-numbering == none {
+  let chnumf = if chapter-numbering == none {
     (..sink) => none
-  } else if type(section-numbering) == str {
-    std.numbering.with(section-numbering)
+  } else if type(chapter-numbering) == str {
+    std.numbering.with(chapter-numbering)
   } else {
-    section-numbering.with(loc: loc)
+    chapter-numbering.with(loc: loc)
   }
 
-  secnumf(
-    counter(heading).at(loc).at(0),
+  let i = if doc-state.at(loc) == "appendix" and doc-class.at(loc) == "bachelor" { 1 } else { 0 }
+
+  chnumf(
+    counter(heading).at(loc).at(i, default: 9),
   )
   numf(
     ..ns,
@@ -295,7 +299,7 @@
 }
 
 #let figure-numbering-with-chapter = numbering-with-chapter.with(
-  section-numbering: (
+  chapter-numbering: (
     ..ns,
     loc: auto,
   ) => context {
@@ -310,7 +314,7 @@
 
 #let equation-numbering-with-chapter = numbering-with-chapter.with(
   numbering: "1)",
-  section-numbering: (
+  chapter-numbering: (
     ..ns,
     loc: auto,
   ) => context {

@@ -59,9 +59,12 @@
     bibliography-style,
     description,
     print,
+    degree,
     bachelor,
     binding-guide,
   ) = conf
+
+  doc-class.update(degree)
 
   set document(
     title: trans.at(lang).title,
@@ -140,7 +143,7 @@
 
   set figure(
     numbering: figure-numbering-with-chapter.with(
-      numbering: "1-1",
+      numbering: "1",
     ),
   )
 
