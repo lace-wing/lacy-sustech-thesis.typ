@@ -52,7 +52,7 @@
 /// - `columns` 与 `table` 的 `columns` 一样，可以是一个数字（有几列）或长度的数组（每一列有多宽）
 /// - `caption` 是总图注
 /// - `label` 是总图标签
-/// 
+///
 /// = 示例
 /// ```example
 /// #figures(
@@ -94,7 +94,7 @@
 /// - lang (auto, str): 语言，默认为论文的语言
 /// - region (auto, str): 地区，默认为 `lang` 最常对应的地区，或若 `lang` 是论文语言，默认为论文的地区
 /// - conf (dictionary): 配置；大概不用动这个
-/// - trans (dictionary): 翻译；大概不用动这个 
+/// - trans (dictionary): 翻译；大概不用动这个
 /// - body (content): 摘要内容，不含标题或关键词
 /// -> content
 #let abstract(
@@ -374,7 +374,7 @@
       weight: if bachelor {
         "bold"
       } else {
-        "normal"
+        "regular"
       },
     )
     set align(center)
@@ -451,7 +451,7 @@
 /// - lang (auto, str): 语言，默认为论文的语言
 /// - region (auto, str): 地区，默认为 `lang` 最常对应的地区，或若 `lang` 是论文语言，默认为论文的地区
 /// - conf (dictionary): 配置；大概不用动这个
-/// - trans (dictionary): 翻译；大概不用动这个 
+/// - trans (dictionary): 翻译；大概不用动这个
 /// -> content
 #let title-page(
   lang: auto,
@@ -934,12 +934,12 @@
       let cb = box(stroke: black, width: 9pt, height: 9pt, fill: black)
       let bnow = eb
       let blater = bnow
-      let delay-text = box(stroke: (bottom: gray), width: 1.5em)
+      let delay-text = box(stroke: (bottom: gray), outset: (bottom: 1pt), width: 1.5em)
       if type(publication-delay) == int {
         if publication-delay == 0 { bnow = cb } else {
           blater = cb
-          delay-text = box(stroke: (bottom: gray), width: 1.5em, height: 9pt, align(
-            center + top,
+          delay-text = box(stroke: (bottom: gray), outset: (bottom: 1pt), width: 1.5em, height: 9pt, align(
+            center,
             str(publication-delay),
           ))
         }
@@ -1068,7 +1068,7 @@
         weight: if bachelor {
           "bold"
         } else {
-          "normal"
+          "regular"
         },
       ) if it.level == 1
       show regex(`[0-9\p{Latin}]+`.text): set text(

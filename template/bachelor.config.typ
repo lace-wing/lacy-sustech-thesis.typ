@@ -8,7 +8,6 @@
   cover,
   title-page,
   abstract,
-  reviewers-n-committee,
   declarations,
   outline,
   conclusion,

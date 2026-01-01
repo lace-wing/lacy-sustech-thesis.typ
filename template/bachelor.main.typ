@@ -71,7 +71,7 @@ $
 #figure(
   caption: [本论文的封面],
   image(
-    "cover.png",
+    "assets/cover.png",
     height: 40%,
   ),
 )
