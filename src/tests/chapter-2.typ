@@ -27,7 +27,7 @@ some fig @fg:1 and @fg:1-a
 
 Some sentence @carlson1981two[67-69].
 
-@sc:2[]
+@sc:2
 
 #figure(
   caption: [Data],

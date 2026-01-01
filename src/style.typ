@@ -146,7 +146,7 @@
       below: if it.level >= 1 { 18pt } else { 6pt },
     )
 
-    set heading(supplement: none) if it.level == 1
+    set heading(supplement: none) if not bachelor and it.level == 1
 
     it
   }
@@ -421,7 +421,10 @@
   trans: none,
   body,
 ) = {
-  let (print,) = conf
+  let (
+    print,
+    bachelor,
+  ) = conf
 
   if print {
     pagebreak(to: "even")
@@ -433,19 +436,24 @@
   )
 
   set heading(
-    numbering: numbly(
-      n => context if text.lang == "zh" [第#n;章] else [CHAPTER #n],
-      "{1}.{2}",
-      "{1}.{2}.{3}",
-      (..ns) => context if text.lang == "zh" [
-        // #h(-0.6em, weak: true)（#ns.at(3)）#h(-0.6em)
-        （#ns.at(3)）#h(-0.3em)
-      ] else [
-        (#ns.at(3))
-      ],
-      "{5:①}",
-      "{6:a.}",
-    ),
+    numbering: if bachelor {
+      // NOTE Choosing the simplest.
+      "1."
+    } else {
+      numbly(
+        n => context if text.lang == "zh" [第#n;章] else [CHAPTER #n],
+        "{1}.{2}",
+        "{1}.{2}.{3}",
+        (..ns) => context if text.lang == "zh" [
+          // #h(-0.6em, weak: true)（#ns.at(3)）#h(-0.6em)
+          （#ns.at(3)）#h(-0.3em)
+        ] else [
+          (#ns.at(3))
+        ],
+        "{5:①}",
+        "{6:a.}",
+      )
+    },
   )
 
   counter(page).update(1)
