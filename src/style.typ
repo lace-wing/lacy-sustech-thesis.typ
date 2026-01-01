@@ -70,6 +70,12 @@
     region: region,
   )
 
+  // NOTE Assuming the font (Times New Roman) is OpenType
+  // and implements proportional width correctly.
+  // show smartquote: set text(features: ("pwid",))
+  // which (my) Times New Roman does not.
+  show smartquote: set text(font: "Times New Roman")
+
   set par(
     first-line-indent: (amount: 2em, all: true),
     leading: leading,
@@ -127,7 +133,7 @@
         font.csort.S3
       } else if it.level == 2 {
         font.csort.S4
-      } else if it.level == 3 {
+      } else if it.level == 3 and not bachelor {
         13pt
       } else {
         font.csort.s4

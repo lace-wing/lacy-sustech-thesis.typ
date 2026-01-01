@@ -67,12 +67,13 @@
   trans: none,
   body,
 ) = {
-  let (
+  let lang = firstconcrete(lang, conf.lang)
+  let (region,) = args-lang(
     lang,
-    region,
-  ) = args-lang(
-    firstconcrete(lang, conf.lang),
-    firstconcrete(region, conf.region),
+    firstconcrete(
+      region,
+      default: if lang == conf.lang { conf.region } else { auto },
+    ),
   ).named()
   let (
     print,
@@ -80,7 +81,8 @@
   ) = conf
 
   set text(
-    ..args-lang(lang, region),
+    lang: lang,
+    region: region,
   )
 
   set text(
@@ -785,52 +787,61 @@
     lang,
     publication-delay,
     print,
+    bachelor,
   ) = conf
+
+  let author = if lang == "zh" [作者] else [Author]
+
+  let supervisor = if lang == "zh" [指导教师] else [Supervisor]
 
   let signature(
     of: none,
-  ) = grid(
-    columns: (2fr, 1fr),
-    rows: 2cm,
-    align: left + horizon,
-    ..(
+  ) = {
+    let stext = {
       if lang == "zh" {
-        (
-          spreadl(3em)[#of;签名] + [：],
-          spreadl(3em)[日期] + [：],
-        )
+        spreadl(3em)[#of;签名] + [：]
       } else {
-        (
-          [Signature#firstof(of, ts: i => [ of #i]): ],
-          [Date: ],
-        )
+        [Signature#firstof(of, ts: i => [ of #i]): ]
       }
-    )
-  )
-
-  let author = if lang == "zh" [作者] else [Author]
-  let supervisor = if lang == "zh" [指导教师] else [Supervisor]
-
-  let delay-boxes = {
-    //HACK 9pt only for s4 font size
-    let eb = box(stroke: black, width: 9pt, height: 9pt)
-    let cb = box(stroke: black, width: 9pt, height: 9pt, fill: black)
-    let bnow = eb
-    let blater = bnow
-    let delay-text = box(stroke: (bottom: black), width: 1.5em)
-    if type(publication-delay) == int {
-      if publication-delay == 0 { bnow = cb } else {
-        blater = cb
-        delay-text = box(stroke: (bottom: black), width: 1.5em, height: 9pt, align(
-          center + top,
-          str(publication-delay),
-        ))
+      if bachelor {
+        h(6em)
       }
     }
-    let now = if lang == "zh" [当年] else [upon submission]
-    let later = if lang == "zh" [年以后] else [ months after submission]
 
-    [#bnow #now/ #blater #delay-text;#later]
+    let ubox = box.with(
+      stroke: (bottom: gray),
+      outset: (bottom: 2pt),
+    )
+
+    let dtext = {
+      if lang == "zh" {
+        if bachelor [
+          #ubox(width: 4em)年#ubox(width: 2em)月#ubox(width: 2em)日
+        ] else {
+          spreadl(3em)[日期] + [：]
+        }
+      } else [Date: ]
+      if bachelor {
+        h(6em)
+      }
+    }
+
+    if bachelor {
+      grid(
+        columns: 1fr,
+        rows: 1.5cm,
+        align: right + horizon,
+        stext,
+        dtext,
+      )
+    } else {
+      grid(
+        columns: (2fr, 1fr),
+        rows: 2cm,
+        align: left + horizon,
+        stext, dtext,
+      )
+    }
   }
 
   show heading: set align(center)
@@ -846,45 +857,89 @@
     ),
   )
 
-  [
-    = #trans.at(lang).declarations.title
-
-    == #trans.at(lang).declarations.title-originality
-    #if lang == "zh" [
-      本人郑重声明：所提交的学位论文是本人在导师指导下独立进行研究工作所取得的成果。除了特别加以标注和致谢的内容外，论文中不包含他人已发表或撰写过的研究成果。对本人的研究做出重要贡献的个人和集体，均已在文中作了明确的说明。本声明的法律结果由本人承担。
+  if bachelor {
+    set text(
+      size: font.csort.S4,
+    )
+    if lang == "zh" [
+      = #text(font.csort.S2)[诚信承诺]
+      + 本人郑重承诺所呈交的毕业设计（论文），是在导师的指导下，独立进行研究工作所取得的成果，所有数据、图片资料均真实可靠。
+      + 除文中已经注明引用的内容外，本论文不包含任何其他人或集体已经发表或撰写过的作品或成果。对本论文的研究作出重要贡献的个人和集体，均已在文中以明确的方式标明。
+      + 本人承诺在毕业论文（设计）选题和研究内容过程中没有抄袭他人研究成果和伪造相关数据等行为。
+      + 在毕业论文（设计）中对侵犯任何方面知识产权的行为，由本人承担相应的法律责任。
     ] else [
-      I hereby declare that this thesis is my own original work under the guidance of my supervisor.
-      It does not contain any research results that others have published or written.
-      All sources I quoted in the thesis are indicated in references or have been indicated or acknowledged.
-      I shall bear the legal liabilities of the above statement.
+      = #text(font: font.group.song, size: font.csort.S2)[COMMITMENT OF HONESTY]
+      + I solemnly promise that the paper presented comes from my independent research work under my supervisor's supervision. All statistics and images are real and reliable.
+      + Except for the annotated reference, the paper contents no other published work or achievement by person or group. All people making important contributions to the study of the paper have been indicated clearly in the paper.
+      + I promise that I did not plagiarize other people's research achievement or forge related data in the process of designing topic and research content.
+      + If there is violation of any intellectual property right, I will take legal responsibility myself.
     ]
 
-    #signature(of: author)
+    v(1fr)
+    signature(of: author)
+  } else {
+    let delay-boxes = {
+      //HACK 9pt only for s4 font size
+      let eb = box(stroke: black, width: 9pt, height: 9pt)
+      let cb = box(stroke: black, width: 9pt, height: 9pt, fill: black)
+      let bnow = eb
+      let blater = bnow
+      let delay-text = box(stroke: (bottom: gray), width: 1.5em)
+      if type(publication-delay) == int {
+        if publication-delay == 0 { bnow = cb } else {
+          blater = cb
+          delay-text = box(stroke: (bottom: gray), width: 1.5em, height: 9pt, align(
+            center + top,
+            str(publication-delay),
+          ))
+        }
+      }
+      let now = if lang == "zh" [当年] else [upon submission]
+      let later = if lang == "zh" [年以后] else [ months after submission]
 
-    == #trans.at(lang).declarations.title-authorization
-    #if lang == "zh" [
-      本人完全了解南方科技大学有关收集、保留、使用学位论文的规定，即：
-      + 按学校规定提交学位论文的电子版本。
-      + 学校有权保留并向国家有关部门或机构送交学位论文的电子版，允许论文被查阅。
-      + 在以教学与科研服务为目的前提下，学校可以将学位论文的全部或部分内容存储在有关数据库提供检索，并可采用数字化、云存储或其他存储手段保存本学位论文。
-        + 在本论文提交当年，同意在校园网内提供查询及前十六页浏览服务。
-        + 在本论文提交 #delay-boxes;，同意向全社会公开论文全文的在线浏览和下载。
-      + 保密的学位论文在解密后适用本授权书。
-    ] else [
-      I fully understand the regulations regarding the collection, retention, and use of the thesis of the Southern University of Science and Technology.
+      [#bnow #now/ #blater #delay-text;#later]
+    }
 
-      + Submit the electronic version of the thesis as required by the University.
-      + The University has the right to retain and send the electronic version to other institutions that allow the thesis to be read by the public.
-      + The University may save all or part of the thesis in certain databases for retrieval and may save it with digital, cloud storage, or other methods for teaching and scientific re-search.
-        I agree that the full text of the thesis can be viewed online or downloaded within the campus network.
-        + I agree that once submitted, the thesis can be retrieved online and the first 16 pages can be viewed within the campus network.
-        + I agree that #delay-boxes, the full text of the thesis can be viewed and downloaded by the public.
-      + This authorization applies to the decrypted confidential thesis.
+    [
+      = #trans.at(lang).declarations.title
+
+      == #trans.at(lang).declarations.title-originality
+      #if lang == "zh" [
+        本人郑重声明：所提交的学位论文是本人在导师指导下独立进行研究工作所取得的成果。除了特别加以标注和致谢的内容外，论文中不包含他人已发表或撰写过的研究成果。对本人的研究做出重要贡献的个人和集体，均已在文中作了明确的说明。本声明的法律结果由本人承担。
+      ] else [
+        I hereby declare that this thesis is my own original work under the guidance of my supervisor.
+        It does not contain any research results that others have published or written.
+        All sources I quoted in the thesis are indicated in references or have been indicated or acknowledged.
+        I shall bear the legal liabilities of the above statement.
+      ]
+
+      #signature(of: author)
+
+      == #trans.at(lang).declarations.title-authorization
+      #if lang == "zh" [
+        本人完全了解南方科技大学有关收集、保留、使用学位论文的规定，即：
+        + 按学校规定提交学位论文的电子版本。
+        + 学校有权保留并向国家有关部门或机构送交学位论文的电子版，允许论文被查阅。
+        + 在以教学与科研服务为目的前提下，学校可以将学位论文的全部或部分内容存储在有关数据库提供检索，并可采用数字化、云存储或其他存储手段保存本学位论文。
+          + 在本论文提交当年，同意在校园网内提供查询及前十六页浏览服务。
+          + 在本论文提交 #delay-boxes;，同意向全社会公开论文全文的在线浏览和下载。
+        + 保密的学位论文在解密后适用本授权书。
+      ] else [
+        I fully understand the regulations regarding the collection, retention, and use of the thesis of the Southern University of Science and Technology.
+
+        + Submit the electronic version of the thesis as required by the University.
+        + The University has the right to retain and send the electronic version to other institutions that allow the thesis to be read by the public.
+        + The University may save all or part of the thesis in certain databases for retrieval and may save it with digital, cloud storage, or other methods for teaching and scientific re-search.
+          I agree that the full text of the thesis can be viewed online or downloaded within the campus network.
+          + I agree that once submitted, the thesis can be retrieved online and the first 16 pages can be viewed within the campus network.
+          + I agree that #delay-boxes, the full text of the thesis can be viewed and downloaded by the public.
+        + This authorization applies to the decrypted confidential thesis.
+      ]
+
+      #signature(of: author)
+      #signature(of: supervisor)
     ]
-
-    #signature(of: author)
-    #signature(of: supervisor)
-  ]
+  }
 
   pagebreak(
     weak: true,
@@ -966,7 +1021,7 @@
           "normal"
         },
       ) if it.level == 1
-      show regex(`[0-9\p{Latin}]`.text): set text(
+      show regex(`[0-9\p{Latin}]+`.text): set text(
         weight: "bold",
       ) if not bachelor
 

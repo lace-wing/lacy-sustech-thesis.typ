@@ -19,7 +19,7 @@
   attachment-style,
 ) = setup(
   // distribution: "print",
-  lang: "en",
+  // lang: "en",
   title: (
     zh: [狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记狂人日记],
     en: [Diary of a Normal Madman],
