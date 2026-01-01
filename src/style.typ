@@ -9,7 +9,7 @@
 #let leading = 20pt - font.csort.s4
 
 // Section title as header. {{{
-#let header-with-section = text(
+#let header-with-chapter = text(
   size: font.csort.S5,
   context {
     set align(center)
@@ -78,11 +78,15 @@
 
   set par(
     first-line-indent: (amount: 2em, all: true),
-    leading: leading,
+    leading: if bachelor {
+      1em
+    } else {
+      leading
+    },
   )
 
   set figure(
-    numbering: figure-numbering-with-section.with(
+    numbering: figure-numbering-with-chapter.with(
       numbering: "1-1",
     ),
   )
@@ -138,7 +142,13 @@
       } else {
         font.csort.s4
       },
-      weight: if it.level < 4 { "bold" } else { "regular" },
+      weight: if bachelor {
+        "bold"
+      } else if it.level < 4 {
+        "bold"
+      } else {
+        "regular"
+      },
     )
 
     set block(
@@ -161,9 +171,9 @@
     set align(center)
     show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
 
-    if not bachelor {
-      pagebreak(weak: true)
-    }
+    // if not bachelor {
+    pagebreak(weak: true)
+    // }
 
     it
   }
@@ -190,7 +200,7 @@
   show: equate
 
   set math.equation(
-    numbering: equation-numbering-with-section,
+    numbering: equation-numbering-with-chapter,
   )
 
   // HACK Fixing equations' contextual numbering not following original heading count.
@@ -432,7 +442,11 @@
 
   set page(
     numbering: "1",
-    header: header-with-section,
+    header: if bachelor {
+      none
+    } else {
+      header-with-chapter
+    },
   )
 
   set heading(
@@ -465,20 +479,39 @@
 
 // Appendix. {{{
 #let appendix(
+  conf: none,
   body,
 ) = {
-  section.update("appendix")
+  let (bachelor,) = conf
+
+  doc-state.update("appendix")
 
   counter(heading).update(0)
 
   set heading(
-    numbering: "A.1.",
+    numbering: if bachelor {
+      // Drop first number since they want appendix to be one chapter.
+      (..ns) => numbering("A1.1", ..ns.pos().slice(1))
+    } else {
+      "A.1."
+    },
     supplement: context if text.lang == "zh" [附录] else [APPENDIX],
   )
 
+  // Make it truly none, hence no gap between a non-none numbering that returns none.
   show heading.where(level: 1): set heading(
-    numbering: n => {
-      let num = numbering("A", n)
+    numbering: none,
+  ) if bachelor
+
+  let offset = if bachelor { 1 } else { 0 }
+
+  show heading.where(level: 1 + offset): set heading(
+    numbering: (..ns) => {
+      let ns = ns.pos()
+      if bachelor and ns.len() == 1 {
+        return none
+      }
+      let num = numbering("A", ns.at(offset))
       context if text.lang == "zh" [附录#num] else [APPENDIX #num]
     },
     supplement: none,
@@ -497,11 +530,17 @@
     supplement: none,
   )
 
+  show heading.where(level: 2): set align(center)
+
+  // Override appendix show with inner show.
   show heading.where(level: 1): set heading(
     numbering: none,
+    supplement: auto,
   )
-
-  show heading.where(level: 2): set align(center)
+  show heading.where(level: 2): set heading(
+    numbering: none,
+    supplement: auto,
+  )
 
   body
 }

@@ -39,10 +39,10 @@
 
 // Subfigure wrapper. {{{
 #let figures = subpar.grid.with(
-  numbering: figure-numbering-with-section.with(
+  numbering: figure-numbering-with-chapter.with(
     numbering: "1",
   ),
-  numbering-sub-ref: figure-numbering-with-section.with(
+  numbering-sub-ref: figure-numbering-with-chapter.with(
     numbering: "1 (a)",
   ),
   grid-styles: it => {
@@ -821,7 +821,7 @@
           spreadl(3em)[日期] + [：]
         }
       } else [Date: ]
-      if bachelor {
+      if bachelor and lang != "zh" {
         h(6em)
       }
     }

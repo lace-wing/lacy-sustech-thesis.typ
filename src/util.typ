@@ -262,9 +262,9 @@
 
 #let config = state(ns(pkg-name, "config"), (:))
 
-#let section = state(ns(pkg-name, "section"), none)
+#let doc-state = state(ns(pkg-name, "section"), none)
 
-#let numbering-with-section(
+#let numbering-with-chapter(
   ..ns,
   loc: auto,
   numbering: none,
@@ -294,12 +294,12 @@
   )
 }
 
-#let figure-numbering-with-section = numbering-with-section.with(
+#let figure-numbering-with-chapter = numbering-with-chapter.with(
   section-numbering: (
     ..ns,
     loc: auto,
   ) => context {
-    let pattern = if section.at(loc) == "appendix" {
+    let pattern = if doc-state.at(loc) == "appendix" {
       "A-"
     } else {
       "1-"
@@ -308,13 +308,13 @@
   },
 )
 
-#let equation-numbering-with-section = numbering-with-section.with(
+#let equation-numbering-with-chapter = numbering-with-chapter.with(
   numbering: "1)",
   section-numbering: (
     ..ns,
     loc: auto,
   ) => context {
-    let pattern = if section.at(loc) == "appendix" {
+    let pattern = if doc-state.at(loc) == "appendix" {
       "(A-"
     } else {
       "(1-"

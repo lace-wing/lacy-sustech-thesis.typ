@@ -9,7 +9,7 @@ $
 
 some $"inline" [a]$ text @eq:1
 
-some fig @fg:2-b
+some #footnote[lmao text] fig @fg:2-b #footnote[kk]
 
 $
   integral_(a)^(b) e^(-x) dif x \

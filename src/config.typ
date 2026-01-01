@@ -33,7 +33,9 @@
     body-matter-style: body-matter.with(
       conf: conf,
     ),
-    appendix-style: appendix,
+    appendix-style: appendix.with(
+      conf: conf,
+    ),
     attachment-style: post-appendix,
     // }}}
     // Components. {{{
