@@ -988,7 +988,7 @@
     } else {
       3
     },
-    title: ohfunc(if lang == "zh" [目录] else [TABLE OF CONTENTS]),
+    title: none,
   )
 
   show outline.entry: it => {
@@ -1052,6 +1052,15 @@
       ),
     )
   }
+
+  align(
+    center,
+    heading(
+      level: 1,
+      outlined: false,
+      ohfunc(if lang == "zh" [目录] else [TABLE OF CONTENTS]),
+    ),
+  )
 
   outline()
 

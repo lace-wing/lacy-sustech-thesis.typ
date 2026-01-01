@@ -208,8 +208,12 @@
     counter(figure.where(kind: table)).update(0)
     counter(figure.where(kind: raw)).update(0)
 
-    set align(center)
-    show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
+    set align(center) if not bachelor
+    show regex(`^\p{Han}{2}$`.text): it => if bachelor {
+      it
+    } else {
+      spreadl(3em, it)
+    }
 
     // if not bachelor {
     pagebreak(weak: true)
@@ -279,16 +283,9 @@
   }
 
   set bibliography(
-    style: "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl",
-  ) if bibliography-style == "author-date"
-
-  set bibliography(
-    style: "./gb-t-7714-2015-numeric.hayagriva-0.9.1.csl",
-  ) if bibliography-style == "numeric"
-
-  set bibliography(
+    title: none,
     style: bibliography-style,
-  ) if bibliography-style not in ("numeric", "author-date")
+  )
 
   // HACK Fixing supplement.
   // Source: <https://forum.typst.app/t/how-to-cite-with-a-page-number-in-gb-t-7714-2015-style/1501/4>, edited.
@@ -304,6 +301,15 @@
   // HACK Fixing zh-en mixed bibliography.
   // Source: modern-nju-thesis 0.4.0, edited.
   show bibliography: it => {
+    align(
+      center,
+      heading(
+        level: 1,
+        if lang == "zh" [参考文献] else [REFERENCES],
+      ),
+    )
+
+
     // Please fill in the remaining mapping table here
     let mapping = (
       //"等": "et al",
@@ -542,6 +548,8 @@
   show heading.where(level: 1): set heading(
     numbering: none,
   ) if bachelor
+
+  show heading.where(level: 1): set align(center)
 
   let offset = if bachelor { 1 } else { 0 }
 

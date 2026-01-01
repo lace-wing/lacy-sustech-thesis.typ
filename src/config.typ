@@ -103,6 +103,13 @@
   let master = degree == "master"
   let doctor = degree == "doctor"
   let print = distribution == "print"
+  let bibliography-style = if bibliography-style == "numeric" {
+    "./gb-t-7714-2015-numeric.hayagriva-0.9.1.csl"
+  } else if bibliography-style == "author-date" {
+    "./gb-t-7714-2015-author-date.hayagriva-0.9.1.csl"
+  } else {
+    bibliography-style
+  }
 
   bind-config(
     conf: (
