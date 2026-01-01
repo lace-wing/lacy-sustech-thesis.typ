@@ -6,7 +6,7 @@
 // 更多可用字体见用户手册
 
 // 导入配置
-#import "config.typ": *
+#import "bachelor.config.typ": *
 
 // 施加大体样式，必须放在开头！
 #show: generic-style
@@ -71,7 +71,7 @@ $
 #figure(
   caption: [本论文的封面],
   image(
-    "thumbnail.png",
+    "cover.png",
     height: 40%,
   ),
 )
