@@ -6,7 +6,7 @@
 
 0.2.0版成包时，各模版基于当时（2026-01-01）最新标准制作。
 
-其中，学士学位论文模版基于[2017版本科毕业设计论文规范](bachelor.standard)和[同时期样例](bachelor.template)及[中](bachelor.cover.zh)、[英](bachelor.cover.en)封面，[中](bachelor.declaration.zh)、[英](bachelor.declaration.en)承诺书编写。这些文件当时可见于[教学工作部–学生事务–毕业论文](bachelor.website)网页。
+其中，学士学位论文模版基于[2017版本科毕业设计论文规范][bachelor.standard]和[同时期样例][bachelor.template]及[中][bachelor.cover.zh]、[英][bachelor.cover.en]封面，[中][bachelor.declaration.zh]、[英][bachelor.declaration.en]承诺书编写。这些文件当时可见于[教学工作部–学生事务–毕业论文][bachelor.website]网页。
 
 
 <!-- Links -->
