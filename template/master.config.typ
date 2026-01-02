@@ -1,5 +1,4 @@
-// TODO Replace with package reference.
-#import "../export.typ": *
+#import "@preview/modern-sustech-thesis:0.2.0": *
 
 #let (
   // 帮手组件
