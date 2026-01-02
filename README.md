@@ -8,14 +8,15 @@ The code still documents itself in English.
 ## 用法
 建议在 [Typst Web App](https://typst.app) 里按此模版创建项目（Start from template），或用 Typst CLI 创建模版项目（```shell typst init @preview/modern-sustech-thesis:0.1.1```）之后按需删掉不用的学士（bachelor）或硕博（master、chapters）文件即可。推荐在本地编辑器中配合 Tinymist 语言服务编写文档，体验比网页版好。
 
-模版内容也见于[本仓库](template/)。
+模版自身即教程。更多教程见[官方文档](<https://typst.app/docs/>)和[中文社区导航](<https://typst.dev/guide/>)。
 
-更多教程见[官方文档](<https://typst.app/docs/>)和[中文社区导航](<https://typst.dev/guide/>)。
+模版内容也见于[本仓库](template/)。
 
 本模版特意不包含学术写作很可能要用到的包，比如
 - `physica`（更多符号）
 - `lilaq`（简明绘图）
 - `zero`（数字与单位）
+
 请自行选用最新或合适的版本。
 
 ### 字体
@@ -26,6 +27,7 @@ The code still documents itself in English.
 - Times New Roman
 - Arial
 - XITS Math（不是 STIX）
+
 这些字体必须是*静态*的，因为 Typst v0.14 还不支持可变字体。选择思源字体时尤其要注意。
 
 若用 Typst Web App，则须将字体文件上传到项目中任意位置。
@@ -73,28 +75,31 @@ The code still documents itself in English.
 
 其中，学士学位论文模版基于[本科毕业设计论文规范][bachelor.standard]和[样例][bachelor.template]及[中][bachelor.cover.zh]、[英][bachelor.cover.en]封面，[中][bachelor.declaration.zh]、[英][bachelor.declaration.en]承诺书编写。这些文件当时可见于[教学工作部–学生事务–毕业论文][bachelor.website]网页。
 
-## 致谢
-感谢[Fragecity](<https://github.com/Fragecity>)赞助开发。
-
-感谢本项目所依赖的各程序和代码库。
-
 ## 引用
 - `src/`
     - `assets/`
       - [`zh.sustech-logo.svg`](src/assets/zh.sustech-logo.svg)
       - [`en.sustech-logo.svg`](src/assets/en.sustech-logo.svg)
+
       均来自[中][bachelor.cover.zh]、[英][bachelor.cover.en]封面模版。
+
   - 部分 [`component.typ`](src/component.typ)
   - 部分[`style.typ`](src/style.typ)
   - [`gb-t-7714-2015-author-date.hayagriva-0.9.1.csl`](src/gb-t-7714-2015-author-date.hayagriva-0.9.1.csl)
   - [`gb-t-7714-2015-numeric.cite.csl`](src/gb-t-7714-2015-numeric.cite.csl)
   - [`gb-t-7714-2015-numeric.hayagriva-0.9.1.csl`](src/gb-t-7714-2015-numeric.hayagriva-0.9.1.csl)
-  出处已在文中首次出现时标明。
+
+  引用已在首次出现时标明。
 
 鉴于被引作品属于公共领域，无证书可循，或未达 MIT 证书要求的“substantial portions”，不做更多引用说明。
 
 ## 证书
 本项目采用 MIT 证书，详见[`LICENSE.txt`](LICENSE.txt)。
+
+## 致谢
+感谢 [Fragecity](<https://github.com/Fragecity>) 赞助开发。
+
+感谢本项目所依赖的各程序和代码库。
 
 
 <!-- Links -->
