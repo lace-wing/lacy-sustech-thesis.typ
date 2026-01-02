@@ -1,4 +1,4 @@
-#import "@preview/conjak:0.2.3": *
+#import "@preview/conjak:0.2.3": cjk-date-format
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/subpar:0.2.2"
 

@@ -6,7 +6,7 @@ You probably read Simplified Chinese if you are using this.
 The code still documents itself in English.
 
 ## 用法
-建议在 [Typst Web App](https://typst.app) 里按此模版创建项目（Start from template），或用 Typst CLI 创建模版项目（```shell typst init @preview/modern-sustech-thesis:0.1.1```）之后按需删掉不用的学士（bachelor）或硕博（master、chapters）文件即可。推荐在本地编辑器中配合 Tinymist 语言服务编写文档，体验比网页版好。
+建议在 [Typst Web App](https://typst.app) 里按此模版创建项目（Start from template），或用 Typst CLI 创建模版项目（typst init @preview/modern-sustech-thesis:0.2.0`）之后按需删掉不用的学士（bachelor）或硕博（master、chapters）文件即可。推荐在本地编辑器中配合 Tinymist 语言服务编写文档，体验比网页版好。
 
 模版自身即教程。更多教程见[官方文档](<https://typst.app/docs/>)和[中文社区导航](<https://typst.dev/guide/>)。
 
