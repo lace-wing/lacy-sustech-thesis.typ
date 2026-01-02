@@ -56,41 +56,41 @@
     "Source Han Serif SC",
     "Source Han Serif",
     "Noto Serif CJK SC",
-    "SimSun",
-    "Songti SC", // Windows
-    "STSongti", // Darwin
+    // "SimSun",
+    // "Songti SC", // Windows
+    // "STSongti", // Darwin
   ),
   hei: (
     (name: "Arial", covers: "latin-in-cjk"),
     "Source Han Sans SC",
     "Source Han Sans",
     "Noto Sans CJK SC",
-    "SimHei",
-    "Heiti SC", // Windows
-    "STHeiti", // Darwin
+    // "SimHei",
+    // "Heiti SC", // Windows
+    // "STHeiti", // Darwin
   ),
   hei-latin-song: (
     (name: "Times New Roman", covers: "latin-in-cjk"),
     "Source Han Sans SC",
     "Source Han Sans",
     "Noto Sans CJK SC",
-    "SimHei",
-    "Heiti SC", // Windows
-    "STHeiti", // Darwin
+    // "SimHei",
+    // "Heiti SC", // Windows
+    // "STHeiti", // Darwin
   ),
   kai: (
     (name: "Times New Roman", covers: "latin-in-cjk"),
     "KaiTi",
     "Kaiti SC",
-    "STKaiti",
-    "FZKai-Z03S",
+    // "STKaiti",
+    // "FZKai-Z03S",
   ),
   fsong: (
     (name: "Times New Roman", covers: "latin-in-cjk"),
     "FangSong",
     "FangSong SC",
-    "STFangSong",
-    "FZFangSong-Z02S",
+    // "STFangSong",
+    // "FZFangSong-Z02S",
   ),
   mono: (
     (name: "Courier New", covers: "latin-in-cjk"),
@@ -99,9 +99,9 @@
     "Source Han Sans HW SC",
     "Source Han Sans HW",
     "Noto Sans Mono CJK SC",
-    "SimHei",
-    "Heiti SC", // Windows
-    "STHeiti", // Darwin
+    // "SimHei",
+    // "Heiti SC", // Windows
+    // "STHeiti", // Darwin
   ),
   song-math: (
     "XITS Math", // Like Times New Roman
@@ -109,18 +109,7 @@
     "Source Han Serif SC",
     "Source Han Serif",
     "Noto Serif CJK SC",
-    "SimSun",
+    // "SimSun",
   ),
-)
-
-/// 字体组。
-#let 字体 = (
-  宋体: group.song,
-  黑体: group.hei,
-  黑体英衬线: group.hei-latin-song,
-  楷体: group.kai,
-  仿宋: group.fsong,
-  等宽: group.mono,
-  宋体数学: group.song-math,
 )
 
