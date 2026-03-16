@@ -264,6 +264,7 @@
         },
       )
     } else {
+      h(2em)
       text(
         size: font.csort.s1,
         weight: "bold",
@@ -423,6 +424,8 @@
 
     trans.zh.institute
     linebreak()
+    // 机构和日期之间的间距
+    h(0.2em)
     cjk-date-format(print-date)
   }
 
