@@ -300,6 +300,7 @@
     parbreak()
 
     set text(
+      font: font.group.song,
       size: font.csort.s2,
     )
     set par(
@@ -594,7 +595,7 @@
           if professional {
             lt.domain
           } else {
-            lt.discipline
+            lt.domain
           }
             + lt.at(degree)
             + if professional { "专业" }
@@ -1097,7 +1098,7 @@
         {
           show: rule
           show regex(`^\p{Han}{2}$`.text): spreadl.with(3em)
-          el.fields().body
+          if it.level == 1 { upper(el.fields().body) } else { el.fields().body }
         },
         fs.fill,
         it.page(),

@@ -25,7 +25,7 @@
             numbering(cand.numbering, ..counter(heading).at(cand.location()))
             h(0.5em)
           }
-          spreadl(3em, cand.body)
+          spreadl(3em, upper(cand.body))
         },
       ),
     )
@@ -99,6 +99,9 @@
         (
           header-ascent: 0.8cm, // 3 - 2.2 = 0.8
           footer-descent: 0.8cm,
+          footer: context if page.numbering != none {
+            align(center, text(font: "Times New Roman", size: 10.5pt, counter(page).display()))
+          },
         )
       }
     ),
@@ -126,6 +129,7 @@
     region: region,
   )
 
+  set text(top-edge: 0.8em, bottom-edge: -0.2em) if not bachelor
   // NOTE Assuming the font (Times New Roman) is OpenType
   // and implements proportional width correctly.
   // show smartquote: set text(features: ("pwid",))
@@ -141,6 +145,7 @@
     },
   )
 
+  set par(spacing: leading) if not bachelor
   set figure(
     numbering: figure-numbering-with-chapter.with(
       numbering: "1",
@@ -208,13 +213,13 @@
     )
 
     set block(
-      above: if it.level >= 2 { 24pt } else { 12pt },
-      below: if it.level >= 1 { 18pt } else { 6pt },
+      above: if bachelor { if it.level >= 2 { 24pt } else { 12pt } } else { (24pt, 24pt, 12pt).at(it.level - 1, default: 0pt) },
+      below: if bachelor or it.level == 1 { 18pt } else if it.level <= 3 { 6pt } else { 0pt },
     )
 
     set heading(supplement: none) if not bachelor and it.level == 1
 
-    it
+    if not bachelor and it.level == 1 { upper(it) } else { it }
   }
 
   show heading.where(level: 1): it => {
@@ -326,6 +331,8 @@
     )
 
 
+    set text(size: 10.5pt) if not bachelor
+    set par(leading: 16pt - 10.5pt, spacing: 16pt - 10.5pt + 3pt) if not bachelor
     // Please fill in the remaining mapping table here
     let mapping = (
       //"等": "et al",
@@ -492,6 +499,7 @@
 
   set page(
     numbering: "I",
+    header: header-with-chapter,
   )
 
   set par(
@@ -531,7 +539,7 @@
   ) = conf
 
   if print and not bachelor {
-    pagebreak(to: "even")
+    pagebreak(to: "odd")
   }
 
   set page(

@@ -12,6 +12,8 @@ The code still documents itself in English.
 
 模版内容也见于[本仓库](template/)。
 
+硕博论文写作要求见[《南方科技大学研究生学位论文写作指南（2024 年 8 月修订）》](<reference/南方科技大学研究生学位论文写作指南(2024年8月修订).pdf>)。
+
 本模版特意不包含学术写作很可能要用到的包，比如
 - `physica`（更多符号）
 - `lilaq`（简明绘图）
@@ -101,7 +103,7 @@ The code still documents itself in English.
 
 
 ## 支持
-在使用模板的过程中有什么困难的，可以联系QQ 1524632440 寻求支持。
+想要接手项目的，可以联系QQ 1524632440 。
 
 
 <!-- Links -->
