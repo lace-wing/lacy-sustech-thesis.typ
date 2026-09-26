@@ -149,6 +149,7 @@
 /// - reviewers (array, none): 公开评审人，`none` 是全隐名评审，每一项必须是如 `(name: 姓名, title: 职称, institute: 机构)` 的 `dictionary`，或同顺序的 `array`；本科论文中无效
 /// - committee (array, none): 答辩委员会，每一项必须是如 `(position: 会职, name: 姓名, title: 职称, institute: 机构)` 的 `dictionary`，或同顺序的 `array`
 /// - bibliography-style (str): 参考文献样式，必须是 `"numeric"`、`"author-date"` 之一，或 `bibliography.style` 支持的样式；“numeric” 对应2015版国标的顺序样式，“author-date” 则对应作者–日期样式；如选则非国标样式，则须自己设置 `cite.style`，否则引用的上标还会是国标样式
+/// - figure-caption-align (alignment): 图注的水平对齐方式，默认为 `center`；可设为 `left`，不影响图形主体和表题的对齐
 /// - description (str, none): 文件描述，文件即生成的 PDF；不是论文中出现的摘要
 /// - binding-guide (bool): 是否显示装订引导线；仅在打印版本科论文中生效
 /// -> dictionary
@@ -182,6 +183,7 @@
   reviewers: none,
   committee: none,
   bibliography-style: "numeric",
+  figure-caption-align: center,
   // Extra...
   description: none,
   binding-guide: true,
@@ -219,6 +221,7 @@
       reviewers: firstof(reviewers, default: ()),
       committee: firstof(committee, default: ()),
       bibliography-style: bibliography-style,
+      figure-caption-align: figure-caption-align,
       description: description,
       // Util
       professional: professional,

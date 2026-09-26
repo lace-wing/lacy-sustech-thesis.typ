@@ -34,7 +34,12 @@ The code still documents itself in English.
 
 若用 Typst Web App，则须将字体文件上传到项目中任意位置。
 
+## 图注对齐
+
+图注默认居中。需要左对齐时，在 `setup(...)` 中设置 `figure-caption-align: left`。该设置只改变图注的对齐方式，图形主体和表题仍按原有方式对齐。
+
 ## 示例
+
 ```typ
 #import "@preview/modern-sustech-thesis:0.2.0": *
 

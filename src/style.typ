@@ -57,6 +57,7 @@
     region,
     print-date,
     bibliography-style,
+    figure-caption-align,
     description,
     print,
     degree,
@@ -169,7 +170,11 @@
     )
     // NOTE `figure` itself covers block spacing, so no extra spacing setting.
 
-    it
+    if it.kind == image and figure-caption-align != center {
+      block(width: 100%, align(figure-caption-align, it))
+    } else {
+      it
+    }
   }
 
   set table(
